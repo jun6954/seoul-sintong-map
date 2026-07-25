@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>서울 신통기획 선정구역 지도</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:#1a1a2e; }
+#app { display:flex; flex-direction:column; height:100vh; }
+
+#header { background:#1a1a2e; padding:12px clamp(14px, 3vw, 28px) 9px; border-bottom:1px solid #2d2d4e; flex-shrink:0; }
+#header h1 { font-size:clamp(15px, 1.7vw, 19px); font-weight:700; color:#f0f0ff; line-height:1.35; }
+#header p  { font-size:clamp(10px, 1.2vw, 12px); color:#8a8ab0; margin-top:3px; line-height:1.45; }
+
+#controls {
+  background:#1a1a2e; padding:8px clamp(14px, 3vw, 28px);
+  display:flex; gap:6px; align-items:center; flex-wrap:wrap;
+  border-bottom:1px solid #2d2d4e; flex-shrink:0;
+}
+.fbtn {
+  min-height:32px; padding:6px 12px; border-radius:20px; border:1px solid #3a3a5e;
+  font-size:12px; font-weight:600; cursor:pointer;
+  background:transparent; color:#6a6a9a; font-family:inherit; transition:all .15s;
+}
+.fbtn.on-all { border-color:#a0a0c0; background:#2a2a4e; color:#e0e0ff; }
+.fbtn.on-1   { border-color:#3b82f6; background:#1e3a8a33; color:#60a5fa; }
+.fbtn.on-2   { border-color:#10b981; background:#06422233; color:#34d399; }
+.fbtn.on-s   { border-color:#ef4444; background:#7f1d1d33; color:#f87171; }
+.fbtn.on-sub { border-color:#f59e0b; background:#78350f33; color:#fbbf24; }
+
+#map-wrap { flex:1; position:relative; }
+#map { width:100%; height:100%; }
+
+/* ── 사이드 패널 ── */
+#side-panel {
+  position:absolute; top:0; right:0; width:clamp(300px, 28vw, 380px); height:100%;
+  background:rgba(15,15,30,0.97);
+  border-left:1px solid #2d2d4e;
+  z-index:1001;
+  display:none;
+  flex-direction:column;
+  backdrop-filter:blur(12px);
+  overflow:hidden;
+}
+#side-panel.open { display:flex; }
+
+#panel-close {
+  position:absolute; top:10px; right:12px;
+  background:none; border:none; color:#6a6a9a;
+  font-size:22px; cursor:pointer; z-index:10; line-height:1;
+}
+#panel-close:hover { color:#f0f0ff; }
+
+#panel-img-wrap {
+  width:100%; height:clamp(170px, 20vh, 220px); overflow:hidden;
+  background:#0a0a1a; flex-shrink:0; position:relative;
+}
+#panel-img {
+  width:100%; height:100%; object-fit:cover;
+  display:block;
+}
+#panel-img-fallback {
+  display:none; width:100%; height:100%;
+  align-items:center; justify-content:center;
+  color:#3a3a5e; font-size:12px;
+}
+#panel-img-label {
+  position:absolute; bottom:8px; left:10px;
+  background:rgba(0,0,0,0.7); color:#e0e0ff;
+  font-size:10px; padding:2px 7px; border-radius:4px;
+}
+
+#panel-body { padding:18px 20px; overflow-y:auto; flex:1; }
+#panel-type  { font-size:10px; font-weight:700; letter-spacing:.6px; text-transform:uppercase; }
+#panel-name  { font-size:17px; font-weight:700; color:#fff; margin:5px 0 3px; line-height:1.3; }
+#panel-addr  { font-size:11px; color:#7a7aaa; margin-bottom:12px; }
+
+.info-row {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding:8px 0; border-bottom:1px solid #1e1e3e; font-size:12px;
+}
+.info-row:last-child { border-bottom:none; }
+.info-label { color:#5a5a8a; flex-shrink:0; width:90px; }
+.info-val   { color:#d0d0f0; text-align:right; flex:1; }
+
+#panel-link {
+  display:block; margin-top:14px;
+  padding:9px 0; text-align:center;
+  border:1px solid #3b82f6; border-radius:8px;
+  color:#60a5fa; font-size:12px; font-weight:600;
+  text-decoration:none; transition:all .15s;
+}
+#panel-link:hover { background:#1e3a8a44; }
+
+/* ── 범례 ── */
+#legend {
+  position:absolute; bottom:20px; left:10px; z-index:1000;
+  background:rgba(15,15,30,0.92); border:1px solid #2d2d4e;
+  border-radius:8px; padding:9px 12px; backdrop-filter:blur(8px);
+}
+.leg-row { display:flex; align-items:center; gap:7px; margin-bottom:4px; font-size:11px; color:#a0a0c0; }
+.leg-row:last-child { margin-bottom:0; }
+.leg-dot { width:10px; height:10px; border-radius:50%; border:2px solid; flex-shrink:0; }
+
+/* 툴팁 */
+.sub-tip.leaflet-tooltip {
+  background:rgba(10,10,30,0.9); border:1px solid #3a3a5e;
+  color:#d0d0ff; font-size:11px; padding:3px 8px; border-radius:5px;
+  font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+.sub-tip.leaflet-tooltip::before { display:none; }
+.leaflet-control-attribution { font-size:9px!important; opacity:.6; }
+
+/* 로딩 */
+#loading-msg {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  background:rgba(15,15,30,0.9); color:#a0a0c0; padding:12px 20px;
+  border-radius:8px; font-size:12px; z-index:500; pointer-events:none;
+  border:1px solid #2d2d4e;
+}
+
+/* 모바일: 패널이 열리면 지도 너비 줄이기 */
+@media (max-width: 600px) {
+  #header { padding-top:10px; }
+  #header p { max-width:36em; }
+  #controls { gap:5px; padding-top:7px; padding-bottom:7px; }
+  .fbtn { flex:1 0 auto; padding:6px 9px; font-size:11px; }
+  #btn-sub { margin-left:0!important; }
+  #side-panel { width:100%; height:min(68%, 540px); top:auto; bottom:0; border-left:none; border-top:1px solid #2d2d4e; }
+  #panel-img-wrap { height:145px; }
+  #panel-body { padding:14px 16px; }
+  #legend { bottom:12px; left:8px; padding:7px 9px; }
+  .leg-row { font-size:10px; }
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  #controls { gap:5px; }
+  .fbtn { font-size:11px; padding-inline:10px; }
+  #side-panel { width:330px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <h1>서울 신속통합기획(신통기획) 선정구역 전체 지도</h1>
+    <p>원 클릭 → 서울시 정비사업 정보몽땅 위치도·현황 표시 | 1·2기 공모 + 수시 127개소</p>
+  </div>
+  <div id="controls">
+    <button class="fbtn on-all" id="btn-all" onclick="setFilter('all')">전체 127</button>
+    <button class="fbtn" id="btn-1"   onclick="setFilter('1기')">1기 공모 21</button>
+    <button class="fbtn" id="btn-2"   onclick="setFilter('2기')">2기 공모 23</button>
+    <button class="fbtn" id="btn-s"   onclick="setFilter('수시')">수시 83</button>
+    <button class="fbtn on-sub" id="btn-sub" onclick="toggleSubway()" style="margin-left:auto">지하철역 숨기기</button>
+  </div>
+  <div id="map-wrap">
+    <div id="map"></div>
+    <div id="loading-msg">지도 불러오는 중...</div>
+
+    <!-- 사이드 패널 -->
+    <div id="side-panel">
+      <button id="panel-close" onclick="closePanel()" aria-label="상세 패널 닫기">×</button>
+      <div id="panel-img-wrap">
+        <img id="panel-img" src="" alt="위치도" onerror="imgFallback()"/>
+        <div id="panel-img-fallback">위치도 이미지 없음</div>
+        <div id="panel-img-label">위치도</div>
+      </div>
+      <div id="panel-body">
+        <div id="panel-type"></div>
+        <div id="panel-name"></div>
+        <div id="panel-addr"></div>
+        <div id="panel-info"></div>
+        <a id="panel-link" href="#" target="_blank">서울시 정비사업 정보몽땅에서 보기 ↗</a>
+      </div>
+    </div>
+
+    <!-- 범례 -->
+    <div id="legend">
+      <div class="leg-row"><div class="leg-dot" style="background:#3b82f644;border-color:#3b82f6"></div>1기 공모 (21)</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#10b98144;border-color:#10b981"></div>2기 공모 (23)</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#ef444444;border-color:#ef4444"></div>수시 선정 (83)</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE = 'https://cleanup.seoul.go.kr/share/cleanup/img/content/';
+const PAGE_URL = 'https://cleanup.seoul.go.kr/cleanup/view/publicIntgrPlanArea.do';
+const TYPE_COLOR = { "1기":"#3b82f6", "2기":"#10b981", "수시":"#ef4444" };
+const TYPE_LABEL = { "1기":"1기 공모 선정구역", "2기":"2기 공모 선정구역", "수시":"수시 선정구역" };
+
+// img: 실제 서울시 사이트 이미지 파일명, owners: 토지등소유자, zone: 용도지역
+const ZONES = [
+  // ── 1기 ──────────────────────────────────────────────────────────────
+  {type:"1기",name:"종로 창신동 23/숭인동 56 일대",gu:"종로구",addr:"창신동 23 일대",area:"104,853㎡",zone:"1종~2종",owners:"711명",img:"sjgy_01.jpg",lat:37.5760,lng:127.0140},
+  {type:"1기",name:"용산 청파2구역",gu:"용산구",addr:"청파동 일대",area:"82,360㎡",zone:"1종~3종",owners:"1,505명",img:"sjgy_02.jpg",lat:37.5474,lng:126.9666},
+  {type:"1기",name:"성동 마장동 382 일대",gu:"성동구",addr:"마장동 382 일대",area:"17,825㎡",zone:"2종(7층)",owners:"136명",img:"sjgy_03.jpg",lat:37.5670,lng:127.0402},
+  {type:"1기",name:"동대문 청량리동 19 일대",gu:"동대문구",addr:"청량리동 19 일대",area:"28,647㎡",zone:"2종",owners:"339명",img:"sjgy_04.jpg",lat:37.5888,lng:127.0453},
+  {type:"1기",name:"중랑 면목동 69-14 일대",gu:"중랑구",addr:"면목동 69-14 일대",area:"58,400㎡",zone:"1종~2종",owners:"657명",img:"sjgy_05.jpg",lat:37.5824,lng:127.0892},
+  {type:"1기",name:"성북 하월곡동 70-1 일대",gu:"성북구",addr:"하월곡동 70-1 일대",area:"80,699㎡",zone:"2종(7층)~3종",owners:"624명",img:"sjgy_06.jpg",lat:37.6046,lng:127.0394},
+  {type:"1기",name:"도봉 쌍문동 724 일대",gu:"도봉구",addr:"쌍문동 724 일대",area:"15,036㎡",zone:"2종(7층)~3종",owners:"180명",img:"sjgy_08.jpg",lat:37.6534,lng:127.0271},
+  {type:"1기",name:"노원 상계5동 일대",gu:"노원구",addr:"상계5동 일대",area:"192,670㎡",zone:"2종(7층), 자연녹지",owners:"1,972명",img:"sjgy_09.jpg",lat:37.6730,lng:127.0703},
+  {type:"1기",name:"은평 불광동 600 일대",gu:"은평구",addr:"불광동 600 일대",area:"13,105㎡",zone:"2종",owners:"188명",img:"sjgy_10.jpg",lat:37.6192,lng:126.9356},
+  {type:"1기",name:"서대문 홍은동 8-400 일대",gu:"서대문구",addr:"홍은동 8-400 일대",area:"88,211㎡",zone:"1종~2종",owners:"557명",img:"sjgy_11.jpg",lat:37.5930,lng:126.9386},
+  {type:"1기",name:"마포 공덕동 A",gu:"마포구",addr:"공덕동 일대",area:"82,586㎡",zone:"2종(7층)~2종, 일반상업",owners:"724명",img:"sjgy_12.jpg",lat:37.5481,lng:126.9550},
+  {type:"1기",name:"양천 신월7동 1구역",gu:"양천구",addr:"신월7동 일대",area:"119,137㎡",zone:"1종~3종",owners:"2,112명",img:"sjgy_13.jpg",lat:37.5264,lng:126.8342},
+  {type:"1기",name:"강서 방화2구역",gu:"강서구",addr:"방화동 일대",area:"34,900㎡",zone:"2종(7층)",owners:"344명",img:"sjgy_14.jpg",lat:37.5759,lng:126.8136},
+  {type:"1기",name:"구로 가리봉2구역",gu:"구로구",addr:"가리봉동 일대",area:"40,522㎡",zone:"2종(7층)~2종",owners:"402명",img:"sjgy_15.jpg",lat:37.4827,lng:126.8880},
+  {type:"1기",name:"금천 시흥동 810 일대",gu:"금천구",addr:"시흥동 810 일대",area:"65,899㎡",zone:"1종~2종(7층)",owners:"535명",img:"sjgy_16.jpg",lat:37.4495,lng:126.9093},
+  {type:"1기",name:"영등포 당산동6가",gu:"영등포구",addr:"당산동6가 일대",area:"30,973㎡",zone:"2종(7층)~3종",owners:"280명",img:"sjgy_17.jpg",lat:37.5365,lng:126.9040},
+  {type:"1기",name:"동작 상도14구역",gu:"동작구",addr:"상도동 일대",area:"50,788㎡",zone:"2종(7층)",owners:"780명",img:"sjgy_18.jpg",lat:37.4987,lng:126.9441},
+  {type:"1기",name:"관악 신림7구역",gu:"관악구",addr:"신림동 일대",area:"75,600㎡",zone:"1종~2종(7층)",owners:"770명",img:"sjgy_19.jpg",lat:37.4632,lng:126.9358},
+  {type:"1기",name:"송파 마천5구역",gu:"송파구",addr:"마천동 일대",area:"108,040㎡",zone:"1종~3종",owners:"1,108명",img:"sjgy_20.jpg",lat:37.4985,lng:127.1527},
+  {type:"1기",name:"강동 천호A1-2구역",gu:"강동구",addr:"천호동 일대",area:"30,670㎡",zone:"3종",owners:"247명",img:"sjgy_21.jpg",lat:37.5444,lng:127.1276},
+  // ── 2기 ──────────────────────────────────────────────────────────────
+  {type:"2기",name:"창신9구역",gu:"종로구",addr:"창신동 23-606 일대",area:"133,845㎡",zone:"1종, 2종(7층)",owners:"-",img:"ssSunjung2_01.png",lat:37.5772,lng:127.0118},
+  {type:"2기",name:"창신10구역",gu:"종로구",addr:"창신동 629 일대",area:"81,370㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"ssSunjung2_02.png",lat:37.5740,lng:127.0160},
+  {type:"2기",name:"서계동통합구역",gu:"용산구",addr:"서계동 33 일대",area:"112,599㎡",zone:"1종~3종",owners:"-",img:"ssSunjung2_03.png",lat:37.5455,lng:126.9730},
+  {type:"2기",name:"성동구 사근동 293 일대",gu:"성동구",addr:"사근동 293 일대",area:"28,465㎡",zone:"2종(7층)",owners:"-",img:"ssSunjung2_04.png",lat:37.5630,lng:127.0450},
+  {type:"2기",name:"자양4동통합구역",gu:"광진구",addr:"자양4동 57-90 일대",area:"139,130㎡",zone:"1종~3종",owners:"-",img:"ssSunjung2_05.png",lat:37.5400,lng:127.0800},
+  {type:"2기",name:"용두제3구역",gu:"동대문구",addr:"용두동 39-361 일대",area:"24,957㎡",zone:"2종",owners:"-",img:"ssSunjung2_06.png",lat:37.5800,lng:127.0310},
+  {type:"2기",name:"상봉13구역",gu:"중랑구",addr:"망우동 461 일대",area:"45,598㎡",zone:"3종",owners:"-",img:"ssSunjung2_08.png",lat:37.5960,lng:127.0930},
+  {type:"2기",name:"성북구 종암동 3-10 일대",gu:"성북구",addr:"종암동 3-10 일대",area:"25,351㎡",zone:"2종(7층)",owners:"-",img:"ssSunjung2_09.png",lat:37.5990,lng:127.0310},
+  {type:"2기",name:"성북구 석관동 62-1 일대",gu:"성북구",addr:"석관동 62-1 일대",area:"62,086㎡",zone:"2종(7층), 2종",owners:"-",img:"ssSunjung2_10.png",lat:37.6060,lng:127.0570},
+  {type:"2기",name:"강북구 번동 441-3 일대",gu:"강북구",addr:"번동 441-3 일대",area:"32,877㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"ssSunjung2_11.png",lat:37.6380,lng:127.0260},
+  {type:"2기",name:"강북구 미아동 791-2882 일대",gu:"강북구",addr:"미아동 791-2882 일대",area:"140,696㎡",zone:"2종(7층)",owners:"-",img:"ssSunjung2_12.png",lat:37.6300,lng:127.0300},
+  {type:"2기",name:"방학3구역",gu:"도봉구",addr:"방학1동 685 일대",area:"72,533㎡",zone:"2종(7층)",owners:"-",img:"ssSunjung2_13.png",lat:37.6650,lng:127.0350},
+  {type:"2기",name:"산새마을",gu:"은평구",addr:"신사동 237 일대",area:"49,822㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"ssSunjung2_14.png",lat:37.6150,lng:126.9210},
+  {type:"2기",name:"편백마을",gu:"은평구",addr:"신사동 200 일대",area:"62,270㎡",zone:"1종, 2종(7층)",owners:"-",img:"ssSunjung2_15.png",lat:37.6110,lng:126.9230},
+  {type:"2기",name:"양천구 목2동 232 일대",gu:"양천구",addr:"목2동 232 일대",area:"21,161㎡",zone:"2종(7층)",owners:"-",img:"ssSunjung2_17.png",lat:37.5300,lng:126.8700},
+  {type:"2기",name:"구로구 고척동 253 일대",gu:"구로구",addr:"고척동 253 일대",area:"62,239㎡",zone:"1종, 2종(7층)",owners:"-",img:"ssSunjung2_18.png",lat:37.5020,lng:126.8650},
+  {type:"2기",name:"가리봉중심1구역",gu:"구로구",addr:"가리봉동 115 일대",area:"90,875㎡",zone:"2종(7층), 2종",owners:"-",img:"ssSunjung2_19.png",lat:37.4850,lng:126.8900},
+  {type:"2기",name:"독산시흥구역",gu:"금천구",addr:"시흥동 871 일대",area:"88,326㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"ssSunjung2_20.png",lat:37.4560,lng:126.9010},
+  {type:"2기",name:"대림1구역",gu:"영등포구",addr:"대림동 855-1 일대",area:"42,505㎡",zone:"2종(7층), 2종, 3종",owners:"-",img:"ssSunjung2_21.png",lat:37.4970,lng:126.9020},
+  {type:"2기",name:"사당4동",gu:"동작구",addr:"사당동 288 일대",area:"26,177㎡",zone:"1종, 2종",owners:"-",img:"ssSunjung2_22.png",lat:37.5010,lng:126.9780},
+  {type:"2기",name:"상도15구역",gu:"동작구",addr:"상도동 279 일대",area:"126,218㎡",zone:"1종, 2종(7층)",owners:"-",img:"ssSunjung2_23.png",lat:37.4940,lng:126.9370},
+  {type:"2기",name:"신림5구역",gu:"관악구",addr:"신림동 412 일대",area:"160,392㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"ssSunjung2_24.png",lat:37.4720,lng:126.9250},
+  {type:"2기",name:"마천2구역",gu:"송파구",addr:"마천동 183 일대",area:"79,069㎡",zone:"2종(7층), 2종, 준주거",owners:"-",img:"ssSunjung2_25.png",lat:37.4960,lng:127.1490},
+  // ── 수시 '23 ──────────────────────────────────────────────────────────
+  {type:"수시",year:"'23",name:"(중랑구) 면목5동 172 일대",gu:"중랑구",addr:"면목5동 172 일대",area:"47,798㎡",zone:"2종(7층), 3종",owners:"-",img:"ssMyeonmok5.png",lat:37.5850,lng:127.0840},
+  {type:"수시",year:"'23",name:"(성북구) 종암동 125-35 일대",gu:"성북구",addr:"종암동 125-35 일대",area:"31,295㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"ssJongam125-35.png",lat:37.5980,lng:127.0350},
+  {type:"수시",year:"'23",name:"(서대문구) 홍제동 267-1 일대",gu:"서대문구",addr:"홍제동 267-1 일대",area:"28,270㎡",zone:"2종(7층), 3종",owners:"-",img:"ssHongje267-1.png",lat:37.5840,lng:126.9420},
+  {type:"수시",year:"'23",name:"(동대문구) 전농동 152-65 일대",gu:"동대문구",addr:"전농동 152-65 일대",area:"71,738㎡",zone:"1종, 2종(7층), 2종, 3종",owners:"-",img:"ssJunnong152-65.png",lat:37.5810,lng:127.0530},
+  {type:"수시",year:"'23",name:"(성북구) 성북동 3-38 일대",gu:"성북구",addr:"성북동 3-38 일대",area:"67,308㎡",zone:"1종",owners:"-",img:"ssSungbuk3-38.png",lat:37.5920,lng:127.0040},
+  {type:"수시",year:"'23",name:"(마포구) 망원동 416-53 일대",gu:"마포구",addr:"망원동 416-53 일대",area:"78,695㎡",zone:"2종(7층)",owners:"-",img:"ssMangone416-53.png",lat:37.5560,lng:126.9090},
+  // ── 수시 '24 ──────────────────────────────────────────────────────────
+  {type:"수시",year:"'24",name:"(구로구) 개봉동 49 일대",gu:"구로구",addr:"개봉동 49 일대",area:"54,947㎡",zone:"2종(7층), 3종",owners:"-",img:"ssGeabong49.png",lat:37.5010,lng:126.8600},
+  {type:"수시",year:"'24",name:"(구로구) 오류동 4 일대(1차)",gu:"구로구",addr:"오류동 4 일대",area:"53,107㎡",zone:"1종, 2종(7층)",owners:"-",img:"ssOryu4.png",lat:37.5060,lng:126.8430},
+  {type:"수시",year:"'24",name:"(금천구) 독산동 1036 일대",gu:"금천구",addr:"독산동 1036 일대",area:"79,036㎡",zone:"2종(7층), 2종, 준주거",owners:"-",img:"ssDocsan1036.png",lat:37.4700,lng:126.8980},
+  {type:"수시",year:"'24",name:"(금천구) 독산동 1072 일대",gu:"금천구",addr:"독산동 1072 일대",area:"81,663㎡",zone:"2종(7층)",owners:"-",img:"ssDocsan1072.png",lat:37.4680,lng:126.9010},
+  {type:"수시",year:"'24",name:"(관악구) 신림동 650 일대",gu:"관악구",addr:"신림동 650 일대",area:"92,041㎡",zone:"1종, 2종(7층)",owners:"-",img:"ssSinrim650.png",lat:37.4750,lng:126.9280},
+  {type:"수시",year:"'24",name:"(도봉구) 쌍문동 81 일대",gu:"도봉구",addr:"쌍문동 81 일대",area:"64,316㎡",zone:"1종, 2종(7층), 2종, 3종",owners:"-",img:"ssSsangmoon81_1.png",lat:37.6470,lng:127.0290},
+  {type:"수시",year:"'24",name:"(동대문구) 장안동 134-15 일대",gu:"동대문구",addr:"장안동 134-15 일대",area:"67,758㎡",zone:"2종(7층), 3종",owners:"-",img:"ssJangan134-15_1.png",lat:37.5760,lng:127.0650},
+  {type:"수시",year:"'24",name:"(양천구) 신월5동 72 일대",gu:"양천구",addr:"신월5동 72 일대",area:"29,665㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"ssSinwol5_1.png",lat:37.5200,lng:126.8370},
+  {type:"수시",year:"'24",name:"(성북구) 정릉동 898-16 일대",gu:"성북구",addr:"정릉동 898-16 일대",area:"53,971㎡",zone:"1종",owners:"-",img:"ssJungrung896-16_1.png",lat:37.6100,lng:127.0010},
+  {type:"수시",year:"'24",name:"(강북구) 미아동 345-1 일대",gu:"강북구",addr:"미아동 345-1 일대",area:"44,061㎡",zone:"2종(7층), 2종",owners:"-",img:"ssMia345-1_1.png",lat:37.6290,lng:127.0250},
+  {type:"수시",year:"'24",name:"(관악구) 신림동 419 일대",gu:"관악구",addr:"신림동 419 일대",area:"43,247㎡",zone:"1종, 2종(7층)",owners:"-",img:"ssSinrim419_1.png",lat:37.4700,lng:126.9310},
+  {type:"수시",year:"'24",name:"(용산구) 후암동 30-2 일대",gu:"용산구",addr:"후암동 30-2 일대",area:"104,071㎡",zone:"2종(7층), 고도지구",owners:"-",img:"ssHuam30-1.png",lat:37.5400,lng:126.9780},
+  {type:"수시",year:"'24",name:"(구로구) 오류동 4 일대(2차)",gu:"구로구",addr:"오류동 4 일대",area:"34,445㎡",zone:"2종(7층), 2종",owners:"-",img:"ssOryu4_2.png",lat:37.5080,lng:126.8460},
+  {type:"수시",year:"'24",name:"(용산구) 후암동 264-11 일대",gu:"용산구",addr:"후암동 264-11 일대",area:"82,173㎡",zone:"1종, 2종(7층)",owners:"-",img:"ssHuam264-11.jpg",lat:37.5380,lng:126.9800},
+  {type:"수시",year:"'24",name:"(중랑구) 중화동 309-39 일대",gu:"중랑구",addr:"중화동 309-39 일대",area:"45,505㎡",zone:"1종, 2종(7층), 2종",owners:"-",img:"joonghwa309-39.jpg",lat:37.5960,lng:127.0780},
+  {type:"수시",year:"'24",name:"(서대문구) 홍제동 9-81 일대",gu:"서대문구",addr:"홍제동 9-81 일대",area:"119,734㎡",zone:"1종, 2종(7층), 2종",owners:"-",img:"hongjae9-81.jpg",lat:37.5880,lng:126.9380},
+  {type:"수시",year:"'24",name:"(동작구) 사당동 63-1 일대",gu:"동작구",addr:"사당동 63-1 일대",area:"41,276㎡",zone:"1종, 2종(7층)",owners:"-",img:"sadang63-1.jpg",lat:37.5070,lng:126.9820},
+  {type:"수시",year:"'24",name:"(중랑구) 면목동 174-1 일대",gu:"중랑구",addr:"면목동 174-1 일대",area:"35,970㎡",zone:"2종(7층), 3종",owners:"-",img:"myunmock174-1.jpg",lat:37.5870,lng:127.0830},
+  {type:"수시",year:"'24",name:"(광진구) 자양동 227-147 일대",gu:"광진구",addr:"자양동 227-147 일대",area:"40,837㎡",zone:"2종, 3종",owners:"-",img:"jayang227-147.png",lat:37.5430,lng:127.0840},
+  {type:"수시",year:"'24",name:"(강북구) 미아동 130 일대",gu:"강북구",addr:"미아동 130 일대",area:"71,096㎡",zone:"1종, 2종(7층)",owners:"-",img:"mia130.jpg",lat:37.6270,lng:127.0290},
+  {type:"수시",year:"'24",name:"(서대문구) 홍제동 287-118 일대",gu:"서대문구",addr:"홍제동 287-118 일대",area:"15,345㎡",zone:"1종, 2종(7층)",owners:"-",img:"hongjae287-118.png",lat:37.5860,lng:126.9400},
+  // ── 수시 '25 ──────────────────────────────────────────────────────────
+  {type:"수시",year:"'25",name:"(강북구) 미아동 75 일대",gu:"강북구",addr:"미아동 75 일대",area:"55,001㎡",zone:"2종(7층), 2종",owners:"-",img:"ssMia75.jpg",lat:37.6350,lng:127.0270},
+  {type:"수시",year:"'25",name:"(용산구) 이태원동 730 일대",gu:"용산구",addr:"이태원동 730 일대",area:"40,437㎡",zone:"제1종, 제2종",owners:"-",img:"ssItaewon730.jpg",lat:37.5380,lng:126.9900},
+  {type:"수시",year:"'25",name:"(관악구) 신림동 306 일대",gu:"관악구",addr:"신림동 306 일대",area:"44,035㎡",zone:"2종(7층), 2종",owners:"-",img:"ssSinrim306.jpg",lat:37.4760,lng:126.9220},
+  {type:"수시",year:"'25",name:"(서대문구) 북가좌동 74-107 일대",gu:"서대문구",addr:"북가좌동 74-107 일대",area:"26,164㎡",zone:"2종(7층), 2종",owners:"-",img:"ssBukgajwa74-107.jpg",lat:37.5720,lng:126.9150},
+  {type:"수시",year:"'25",name:"(광진구) 중곡1동 254-15 일대",gu:"광진구",addr:"중곡1동 254-15 일대",area:"81,344㎡",zone:"2종(7층), 2종",owners:"-",img:"ssJunggok254-15.jpg",lat:37.5590,lng:127.0830},
+  {type:"수시",year:"'25",name:"(구로구) 개봉동 120-1 일대",gu:"구로구",addr:"개봉동 120-1 일대",area:"76,164㎡",zone:"2종(7층), 2종, 3종",owners:"-",img:"ssGaebong120-1.jpg",lat:37.5040,lng:126.8550},
+  {type:"수시",year:"'25",name:"(구로구) 구로동 719 일대",gu:"구로구",addr:"구로동 719 일대",area:"44,232㎡",zone:"2종(7층), 2종",owners:"-",img:"ssGuro719.jpg",lat:37.4960,lng:126.8860},
+  {type:"수시",year:"'25",name:"(동작구) 사당동 305-35 일대",gu:"동작구",addr:"사당동 305-35 일대",area:"41,317㎡",zone:"2종(7층), 2종, 3종",owners:"-",img:"ssSadang305-35.jpg",lat:37.5050,lng:126.9750},
+  {type:"수시",year:"'25",name:"(은평구) 불광동 359-1 일대",gu:"은평구",addr:"불광동 359-1 일대",area:"104,783㎡",zone:"1종, 2종(7층), 2종, 3종",owners:"-",img:"ssBulgwang359-1.jpg",lat:37.6220,lng:126.9280},
+  {type:"수시",year:"'25",name:"(용산구) 청파동1가 97-35 일대",gu:"용산구",addr:"청파동1가 97-35 일대",area:"49,211㎡",zone:"1종, 2종(7층)",owners:"-",img:"chungpa1_97-35.jpg",lat:37.5510,lng:126.9680},
+  {type:"수시",year:"'25",name:"(성북구) 장위동 219-90 일대",gu:"성북구",addr:"장위동 219-90 일대",area:"131,226㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"changyue219-90.jpg",lat:37.6200,lng:127.0520},
+  {type:"수시",year:"'25",name:"(성북구) 장위동 224-12 일대",gu:"성북구",addr:"장위동 224-12 일대",area:"110,642㎡",zone:"1종, 2종(7층)",owners:"-",img:"changyue224-12.jpg",lat:37.6180,lng:127.0540},
+  {type:"수시",year:"'25",name:"(성북구) 정릉동 710-81 일대",gu:"성북구",addr:"정릉동 710-81 일대",area:"24,138㎡",zone:"1종",owners:"-",img:"junglueng710-81.jpg",lat:37.6060,lng:126.9990},
+  {type:"수시",year:"'25",name:"(관악구) 신림동 610-200 일대",gu:"관악구",addr:"신림동 610-200 일대",area:"196,841㎡",zone:"1종, 2종(7층), 2종, 준주거",owners:"-",img:"shinLim610-200.jpg",lat:37.4680,lng:126.9200},
+  {type:"수시",year:"'25",name:"(관악구) 신림동 119-1 일대",gu:"관악구",addr:"신림동 119-1 일대",area:"16,899㎡",zone:"2종(7층)",owners:"-",img:"shinLim119-1.jpg",lat:37.4810,lng:126.9360},
+  {type:"수시",year:"'25",name:"(양천구) 신정4동 922 일대",gu:"양천구",addr:"신정4동 922 일대",area:"84,187㎡",zone:"1종, 2종, 3종",owners:"-",img:"sinjung4dong922.jpg",lat:37.5180,lng:126.8640},
+  {type:"수시",year:"'25",name:"(도봉구) 쌍문동 26 일대",gu:"도봉구",addr:"쌍문동 26 일대",area:"39,500㎡",zone:"2종(7층), 2종",owners:"-",img:"ssangmoondong26.jpg",lat:37.6510,lng:127.0250},
+  {type:"수시",year:"'25",name:"(금천구) 독산2동 380 일대",gu:"금천구",addr:"독산2동 380 일대",area:"121,831㎡",zone:"1종, 2종(7층), 2종",owners:"-",img:"dogsan2dong380.jpg",lat:37.4650,lng:126.8960},
+  {type:"수시",year:"'25",name:"(영등포구) 신길동 3922 일대",gu:"영등포구",addr:"신길동 3922 일대",area:"33,897㎡",zone:"2종(7층), 2종, 3종",owners:"-",img:"singildong33922.jpg",lat:37.5130,lng:126.9120},
+  {type:"수시",year:"'25",name:"(은평구) 응암동 675 일대",gu:"은평구",addr:"응암동 675 일대",area:"40,696㎡",zone:"2종(7층), 2종, 3종",owners:"-",img:"oungamdong675.jpg",lat:37.6040,lng:126.9190},
+  {type:"수시",year:"'25",name:"용산구 신창동 29-1 일대",gu:"용산구",addr:"신창동 29-1 일대",area:"16,025㎡",zone:"2종(7층)",owners:"-",img:"sinchangdong29-1.jpg",lat:37.5430,lng:126.9820},
+  {type:"수시",year:"'25",name:"구로구 구로동 466 일대",gu:"구로구",addr:"구로동 466 일대",area:"63,871㎡",zone:"2종(7층), 2종, 3종",owners:"-",img:"gurodong466.jpg",lat:37.4990,lng:126.8830},
+  {type:"수시",year:"'25",name:"구로구 개봉동 153-19 일대",gu:"구로구",addr:"개봉동 153-19 일대",area:"27,100㎡",zone:"2종(7층), 3종",owners:"-",img:"gabongdong153-19.jpg",lat:37.5030,lng:126.8570},
+  {type:"수시",year:"'25",name:"도봉구 방학동 641 일대",gu:"도봉구",addr:"방학동 641 일대",area:"72,283㎡",zone:"1종, 2종(7층)",owners:"-",img:"banghakdong641.jpg",lat:37.6610,lng:127.0350},
+  {type:"수시",year:"'25",name:"동작구 신대방동 344-132 일대",gu:"동작구",addr:"신대방동 344-132 일대",area:"29,462㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"sindaebang344-132.jpg",lat:37.4990,lng:126.9190},
+  {type:"수시",year:"'25",name:"동작구 흑석동 204-104 일대",gu:"동작구",addr:"흑석동 204-104 일대",area:"45,882㎡",zone:"1종, 2종(7층)",owners:"-",img:"huksukdong204-104.jpg",lat:37.5080,lng:126.9600},
+  {type:"수시",year:"'25",name:"동작구 상도동 201 일대",gu:"동작구",addr:"상도동 201 일대",area:"80,937㎡",zone:"2종(7층)",owners:"-",img:"sangdodong201.jpg",lat:37.5020,lng:126.9420},
+  {type:"수시",year:"'25",name:"성북구 삼선동1가 277 일대",gu:"성북구",addr:"삼선동1가 277 일대",area:"56,771㎡",zone:"1종, 2종(7층), 2종",owners:"-",img:"samsundong1ga277.jpg",lat:37.5830,lng:127.0120},
+  {type:"수시",year:"'25",name:"도봉구 방학동 638 일대",gu:"도봉구",addr:"방학동 638 일대",area:"39,271㎡",zone:"1종, 2종(7층)",owners:"-",img:"banghakdong638.jpg",lat:37.6590,lng:127.0360},
+  {type:"수시",year:"'25",name:"동작구 상도동 214 일대",gu:"동작구",addr:"상도동 214 일대",area:"85,788㎡",zone:"1종, 2종(7층), 2종",owners:"-",img:"sangdodong214.jpg",lat:37.5000,lng:126.9450},
+  {type:"수시",year:"'25",name:"동작구 사당동 419-1 일대",gu:"동작구",addr:"사당동 419-1 일대",area:"133,007㎡",zone:"2종(7층), 2종, 3종",owners:"-",img:"sadangdong419-1.jpg",lat:37.5060,lng:126.9870},
+  {type:"수시",year:"'25",name:"영등포구 도림동 133-1 일대",gu:"영등포구",addr:"도림동 133-1 일대",area:"63,654㎡",zone:"2종(7층), 2종",owners:"-",img:"dolimdong133-1.jpg",lat:37.5160,lng:126.9070},
+  {type:"수시",year:"'25",name:"강북구 미아동 159 일대",gu:"강북구",addr:"미아동 159 일대",area:"37,710㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"miadong159.jpg",lat:37.6310,lng:127.0270},
+  {type:"수시",year:"'25",name:"마포구 아현동 331-29 일대",gu:"마포구",addr:"아현동 331-29 일대",area:"18,557㎡",zone:"2종(7층), 2종, 3종, 준주거",owners:"-",img:"ahyundong331-29.jpg",lat:37.5560,lng:126.9580},
+  {type:"수시",year:"'25",name:"용산구 용산동2가 1-1351 일대",gu:"용산구",addr:"용산동2가 1-1351 일대",area:"43,017㎡",zone:"1종",owners:"-",img:"yongsandong2ga1-1351.jpg",lat:37.5330,lng:126.9760},
+  {type:"수시",year:"'25",name:"금천구 시흥동 1 일대",gu:"금천구",addr:"시흥동 1 일대",area:"24,902㎡",zone:"1종",owners:"-",img:"siheung4dong1.jpg",lat:37.4560,lng:126.9000},
+  {type:"수시",year:"'25",name:"종로구 행촌동 210-2 일대",gu:"종로구",addr:"행촌동 210-2 일대",area:"76,310㎡",zone:"1종, 2종",owners:"-",img:"haengchondong210-2.jpg",lat:37.5750,lng:126.9640},
+  {type:"수시",year:"'25",name:"마포구 합정동 444-12 일대",gu:"마포구",addr:"합정동 444-12 일대",area:"40,736㎡",zone:"2종(7층)",owners:"-",img:"hapjeongdong444-12.jpg",lat:37.5500,lng:126.9120},
+  {type:"수시",year:"'25",name:"용산구 이태원동 214-37 일대",gu:"용산구",addr:"이태원동 214-37 일대",area:"66,986㎡",zone:"1종, 2종(7층)",owners:"-",img:"itaewondong214-37.jpg",lat:37.5360,lng:126.9930},
+  {type:"수시",year:"'25",name:"용산구 용산동2가 1-597 일대",gu:"용산구",addr:"용산동2가 1-597 일대",area:"53,735㎡",zone:"1종",owners:"-",img:"yongsandong2ga1-597.jpg",lat:37.5340,lng:126.9740},
+  {type:"수시",year:"'25",name:"은평구 녹번동 35-78 일대",gu:"은평구",addr:"녹번동 35-78 일대",area:"20,321㎡",zone:"2종(7층), 3종",owners:"-",img:"nokbeondong35-78.jpg",lat:37.6100,lng:126.9360},
+  {type:"수시",year:"'25",name:"구로구 구로동 739-7 일대",gu:"구로구",addr:"구로동 739-7 일대",area:"92,521㎡",zone:"1종, 2종",owners:"-",img:"gurodong739-7.jpg",lat:37.4970,lng:126.8870},
+  {type:"수시",year:"'25",name:"금천구 독산동 979 일대",gu:"금천구",addr:"독산동 979 일대",area:"93,991㎡",zone:"1종, 2종(7층), 2종, 3종",owners:"-",img:"duksandong979.jpg",lat:37.4720,lng:126.8940},
+  {type:"수시",year:"'25",name:"금천구 독산동 1022 일대",gu:"금천구",addr:"독산동 1022 일대",area:"83,203㎡",zone:"2종(7층), 2종",owners:"-",img:"duksandong1022.jpg",lat:37.4690,lng:126.8970},
+  {type:"수시",year:"'25",name:"영등포구 신길동 90-31 일대",gu:"영등포구",addr:"신길동 90-31 일대",area:"58,162㎡",zone:"2종(7층)",owners:"-",img:"shingildong90-31.jpg",lat:37.5100,lng:126.9050},
+  {type:"수시",year:"'25",name:"성북구 정릉동 16-179 일대",gu:"성북구",addr:"정릉동 16-179 일대",area:"42,811㎡",zone:"2종(7층), 3종",owners:"-",img:"jungluengdong16-179.jpg",lat:37.6080,lng:127.0000},
+  {type:"수시",year:"'25",name:"성동구 행당동 300-1 일대",gu:"성동구",addr:"행당동 300-1 일대",area:"66,276㎡",zone:"2종(7층), 2종, 3종",owners:"-",img:"hangdangdong300-1.jpg",lat:37.5600,lng:127.0320},
+  {type:"수시",year:"'25",name:"마포구 신수동 250 일대",gu:"마포구",addr:"신수동 250 일대",area:"44,719㎡",zone:"2종(7층), 2종, 3종",owners:"-",img:"sinsudong250.jpg",lat:37.5490,lng:126.9380},
+  {type:"수시",year:"'25",name:"강북구 수유동 310-15 일대",gu:"강북구",addr:"수유동 310-15 일대",area:"15,945㎡",zone:"2종(7층)",owners:"-",img:"suudong310-15.jpg",lat:37.6440,lng:127.0220},
+  {type:"수시",year:"'25",name:"은평구 신사동 300 일대",gu:"은평구",addr:"신사동 300 일대",area:"30,222㎡",zone:"1종",owners:"-",img:"sinsadong300.jpg",lat:37.6170,lng:126.9200},
+  // ── 수시 '26 ──────────────────────────────────────────────────────────
+  {type:"수시",year:"'26",name:"구로구 개봉동 66-15",gu:"구로구",addr:"개봉동 66-15 일대",area:"109,371㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"gurogugaebongdong66-15.jpg",lat:37.5020,lng:126.8510},
+  {type:"수시",year:"'26",name:"구로구 구로동 792-3",gu:"구로구",addr:"구로동 792-3 일대",area:"58,473㎡",zone:"1종, 2종, 3종",owners:"-",img:"gurodong792-3.jpg",lat:37.4950,lng:126.8880},
+  {type:"수시",year:"'26",name:"은평구 불광동 442",gu:"은평구",addr:"불광동 442 일대",area:"109,365㎡",zone:"1종, 2종",owners:"-",img:"bulguangdong442.jpg",lat:37.6250,lng:126.9310},
+  {type:"수시",year:"'26",name:"은평구 불광동 445",gu:"은평구",addr:"불광동 445 일대",area:"89,537㎡",zone:"1종, 3종",owners:"-",img:"bulguangdong445.jpg",lat:37.6230,lng:126.9330},
+  {type:"수시",year:"'26",name:"서대문구 옥천동 123-2",gu:"서대문구",addr:"옥천동 123-2 일대",area:"9,864㎡",zone:"2종(7층), 3종",owners:"-",img:"okchunddong123-2.jpg",lat:37.5810,lng:126.9450},
+  {type:"수시",year:"'26",name:"광진구 구의동 46",gu:"광진구",addr:"구의동 46 일대",area:"105,957㎡",zone:"1종, 2종(7층), 3종",owners:"-",img:"guidong46.jpg",lat:37.5480,lng:127.0900},
+];
+
+// ── 지도 초기화 ────────────────────────────────────────────────────────────
+const map = L.map('map', { center:[37.565,126.980], zoom:12, zoomControl:true, preferCanvas:true });
+
+const osmTile = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom:19,
+  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+  crossOrigin:true,
+});
+osmTile.addTo(map);
+osmTile.on('load', () => { const m=document.getElementById('loading-msg'); if(m) m.style.display='none'; });
+setTimeout(()=>{ const m=document.getElementById('loading-msg'); if(m) m.style.display='none'; }, 3000);
+
+// ── 원형 구역 마커 ────────────────────────────────────────────────────────
+function areaToRadius(areaStr) {
+  const n = parseFloat(areaStr.replace(/[^\d.]/g,'')) * (areaStr.includes('만') ? 10000 : 1);
+  return Math.min(Math.max(Math.sqrt(n/Math.PI)*0.55, 80), 250);
+}
+
+let zoneCircles = [];
+let activeCircle = null;
+
+function openPanel(zone, circle) {
+  // 이전 활성 원 복원
+  if (activeCircle && activeCircle !== circle) {
+    activeCircle.setStyle({ weight:2.5, opacity:0.9, fillOpacity:0.18 });
+  }
+  activeCircle = circle;
+  circle.setStyle({ weight:3.5, opacity:1, fillOpacity:0.32 });
+
+  const c = TYPE_COLOR[zone.type];
+  const panel = document.getElementById('side-panel');
+
+  // 이미지
+  const imgEl = document.getElementById('panel-img');
+  const fallback = document.getElementById('panel-img-fallback');
+  imgEl.style.display = 'block';
+  fallback.style.display = 'none';
+  imgEl.src = BASE + zone.img;
+
+  // 텍스트
+  document.getElementById('panel-type').textContent =
+    TYPE_LABEL[zone.type] + (zone.year ? ' (' + zone.year + ')' : '');
+  document.getElementById('panel-type').style.color = c;
+  document.getElementById('panel-name').textContent = zone.name;
+  document.getElementById('panel-addr').textContent = zone.gu + ' ' + zone.addr;
+
+  const rows = [
+    ['구역면적', zone.area],
+    ['용도지역', zone.zone],
+    ...(zone.owners !== '-' ? [['토지등소유자', zone.owners]] : []),
+  ];
+  document.getElementById('panel-info').innerHTML = rows.map(([l,v])=>
+    `<div class="info-row"><span class="info-label">${l}</span><span class="info-val">${v}</span></div>`
+  ).join('');
+
+  document.getElementById('panel-link').href = PAGE_URL;
+
+  panel.classList.add('open');
+  setTimeout(() => map.invalidateSize(), 0);
+
+  // 모바일이면 지도 중심 이동
+  map.setView([zone.lat, zone.lng], Math.max(map.getZoom(), 14));
+}
+
+function closePanel() {
+  document.getElementById('side-panel').classList.remove('open');
+  setTimeout(() => map.invalidateSize(), 0);
+  if (activeCircle) {
+    activeCircle.setStyle({ weight:2.5, opacity:0.9, fillOpacity:0.18 });
+    activeCircle = null;
+  }
+}
+
+function imgFallback() {
+  document.getElementById('panel-img').style.display = 'none';
+  document.getElementById('panel-img-fallback').style.display = 'flex';
+}
+
+ZONES.forEach(zone => {
+  const c = TYPE_COLOR[zone.type];
+  const circle = L.circle([zone.lat, zone.lng], {
+    radius: areaToRadius(zone.area),
+    color: c, weight:2.5, opacity:0.9,
+    fillColor:c, fillOpacity:0.18,
+  }).addTo(map);
+
+  circle.on('click', () => openPanel(zone, circle));
+  circle.on('mouseover', function() { this.setStyle({ weight:3.5, fillOpacity:0.3 }); this.bringToFront(); });
+  circle.on('mouseout',  function() {
+    if (this !== activeCircle) this.setStyle({ weight:2.5, fillOpacity:0.18 });
+  });
+
+  circle._zoneType = zone.type;
+  zoneCircles.push(circle);
+});
+
+// ── 필터 ─────────────────────────────────────────────────────────────────
+function setFilter(f) {
+  closePanel();
+  ['all','1기','2기','수시'].forEach((v,i)=>{
+    const ids=['btn-all','btn-1','btn-2','btn-s'];
+    const cls=['on-all','on-1','on-2','on-s'];
+    document.getElementById(ids[i]).className = 'fbtn' + (v===f ? ' '+cls[i] : '');
+  });
+  zoneCircles.forEach((c,i)=>{
+    const show = f==='all' || ZONES[i].type===f;
+    show ? (map.hasLayer(c)||c.addTo(map)) : (map.hasLayer(c)&&map.removeLayer(c));
+  });
+}
+
+// ── 지하철역 ──────────────────────────────────────────────────────────────
+const LINE_COLORS = {"1":"#0052a4","2":"#00a84d","3":"#ef7c1c","4":"#00a4e3","5":"#996cac","6":"#cd7c2f","7":"#747f00","8":"#e6186c","9":"#bdb092"};
+const STATIONS = [
+  ["청량리","1",37.5806,127.0456],["동대문","1",37.5716,127.0094],["종각","1",37.5700,126.9830],["서울역","1",37.5547,126.9707],["용산","1",37.5310,126.9648],
+  ["강남","2",37.4980,127.0276],["홍대입구","2",37.5571,126.9255],["합정","2",37.5499,126.9147],["당산","2",37.5336,126.9019],["신림","2",37.4843,126.9298],
+  ["사당","2",37.4765,126.9814],["건대입구","2",37.5404,127.0700],["왕십리","2",37.5614,127.0372],["신촌","2",37.5550,126.9370],["을지로입구","2",37.5660,126.9828],["잠실","2",37.5133,127.1001],
+  ["불광","3",37.6119,126.9318],["홍제","3",37.5938,126.9372],["경복궁","3",37.5759,126.9747],["안국","3",37.5762,126.9858],["압구정","3",37.5272,127.0284],["교대","3",37.4934,127.0139],["고속터미널","3",37.5044,127.0049],["독립문","3",37.5750,126.9613],
+  ["미아사거리","4",37.6260,127.0298],["길음","4",37.6030,127.0253],["혜화","4",37.5823,127.0015],["명동","4",37.5631,126.9853],["서울역","4",37.5547,126.9707],["삼각지","4",37.5358,126.9726],["쌍문","4",37.6479,127.0305],["수유","4",37.6377,127.0252],["상계","4",37.6606,127.0680],["노원","4",37.6555,127.0610],
+  ["방화","5",37.5713,126.8013],["까치산","5",37.5413,126.8671],["영등포구청","5",37.5262,126.9010],["여의도","5",37.5217,126.9245],["공덕","5",37.5446,126.9515],["광화문","5",37.5714,126.9769],["마장","5",37.5655,127.0474],["군자","5",37.5604,127.0780],["마천","5",37.4953,127.1506],["천호","5",37.5388,127.1234],
+  ["응암","6",37.6022,126.9188],["망원","6",37.5558,126.9099],["이태원","6",37.5344,126.9939],["창신","6",37.5770,127.0153],["고려대","6",37.5883,127.0320],
+  ["도봉산","7",37.6858,127.0469],["노원","7",37.6555,127.0610],["중화","7",37.5994,127.0823],["면목","7",37.5867,127.0888],["건대입구","7",37.5404,127.0700],
+  ["논현","7",37.5116,127.0224],["이수","7",37.4873,126.9813],["신대방삼거리","7",37.4944,126.9118],["남구로","7",37.4828,126.8845],["가산디지털단지","7",37.4810,126.8819],["상도","7",37.5003,126.9384],
+  ["개화","9",37.5793,126.8011],["가양","9",37.5612,126.8655],["당산","9",37.5336,126.9019],["여의도","9",37.5217,126.9245],["동작","9",37.5096,126.9799],["고속터미널","9",37.5044,127.0049],["신논현","9",37.5046,127.0254],
+];
+
+const subwayGroup = L.layerGroup();
+STATIONS.forEach(([name,line,lat,lng])=>{
+  const c = LINE_COLORS[line]||'#888';
+  const icon = L.divIcon({
+    className:'',
+    html:`<div style="width:7px;height:7px;border-radius:50%;background:${c};border:1.5px solid #fff;opacity:.9"></div>`,
+    iconSize:[7,7], iconAnchor:[3.5,3.5],
+  });
+  L.marker([lat,lng],{icon,zIndexOffset:-200})
+    .bindTooltip(`<b>${name}</b> <span style="color:${c}">${line}호선</span>`,{direction:'top',offset:[0,-5],className:'sub-tip'})
+    .addTo(subwayGroup);
+});
+subwayGroup.addTo(map);
+
+const tStyle = document.createElement('style');
+tStyle.textContent = `.sub-tip.leaflet-tooltip{background:rgba(10,10,30,.9);border:1px solid #3a3a5e;color:#d0d0ff;font-size:11px;padding:3px 8px;border-radius:5px;font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif}.sub-tip.leaflet-tooltip::before{display:none}.leaflet-control-attribution{font-size:9px!important;opacity:.6}`;
+document.head.appendChild(tStyle);
+
+let subwayOn = true;
+function toggleSubway(){
+  const btn = document.getElementById('btn-sub');
+  if(subwayOn){ map.removeLayer(subwayGroup); btn.textContent='지하철역 표시'; btn.className='fbtn'; }
+  else        { subwayGroup.addTo(map);        btn.textContent='지하철역 숨기기'; btn.className='fbtn on-sub'; }
+  subwayOn = !subwayOn;
+}
+</script>
+</body>
+</html>
