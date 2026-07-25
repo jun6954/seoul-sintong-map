@@ -4,10 +4,11 @@
 
 ## 제공 기능
 
-- 1기 공모·2기 공모·수시 선정구역 127개 표시 및 유형별 필터
+- 신속통합기획·일반 정비사업·중복 사업장 3개 레이어 필터
 - 구역 면적에 비례한 원형 마커와 상세 정보 패널
 - 지하철역 표시/숨김
 - 모바일·태블릿·데스크톱 반응형 레이아웃
+- 서울시 공식 목록을 매일 동기화하는 GitHub Actions 배치
 
 ## 실행 방법
 
@@ -15,7 +16,11 @@
 
 ## 데이터와 한계
 
-데이터 출처는 [서울시 정비사업 정보몽땅](https://cleanup.seoul.go.kr/cleanup/view/publicIntgrPlanArea.do)입니다. 구역 표시는 공개된 경계 폴리곤이 아닌 대표 좌표와 면적에 따른 원형 마커이므로 실제 사업구역 경계와 일치하지 않습니다.
+신속통합기획 데이터는 [서울시 정비사업 정보몽땅](https://cleanup.seoul.go.kr/cleanup/view/publicIntgrPlanArea.do), 일반 정비사업 데이터는 [사업장검색](https://cleanup.seoul.go.kr/cleanup/bsnssttus/lscrMainIndx.do)에서 수집합니다. 일반 정비사업은 서울시 도시공간포털 지도 레코드가 있는 경우에만 공식 도형의 중심점을 지도에 표시합니다. 지도 레코드가 없는 사업장은 임의 좌표로 표시하지 않습니다.
+
+## 자동 동기화와 알림
+
+GitHub Actions는 매일 05:15(KST)에 일반 정비사업 목록을 수집하고 변경 시 Pages를 갱신합니다. Telegram 알림을 사용하려면 저장소 Secrets에 `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`를 설정해야 합니다.
 
 ## 배포
 

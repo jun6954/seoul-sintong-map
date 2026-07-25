@@ -147,13 +147,13 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 <div id="app">
   <div id="header">
     <h1>서울 신속통합기획(신통기획) 선정구역 전체 지도</h1>
-    <p>원 클릭 → 서울시 정비사업 정보몽땅 위치도·현황 표시 | 1·2기 공모 + 수시 127개소</p>
+    <p>신속통합기획과 서울시 일반 정비사업 현황을 함께 확인합니다.</p>
   </div>
   <div id="controls">
-    <button class="fbtn on-all" id="btn-all" onclick="setFilter('all')">전체 127</button>
-    <button class="fbtn" id="btn-1"   onclick="setFilter('1기')">1기 공모 21</button>
-    <button class="fbtn" id="btn-2"   onclick="setFilter('2기')">2기 공모 23</button>
-    <button class="fbtn" id="btn-s"   onclick="setFilter('수시')">수시 83</button>
+    <button class="fbtn on-all" id="btn-all" onclick="setFilter('all')">전체</button>
+    <button class="fbtn" id="btn-1"   onclick="setFilter('sintong')">신속통합기획</button>
+    <button class="fbtn" id="btn-2"   onclick="setFilter('general')">일반 정비사업</button>
+    <button class="fbtn" id="btn-s"   onclick="setFilter('overlap')">중복 사업장</button>
     <button class="fbtn on-sub" id="btn-sub" onclick="toggleSubway()" style="margin-left:auto">지하철역 숨기기</button>
   </div>
   <div id="map-wrap">
@@ -179,9 +179,9 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 
     <!-- 범례 -->
     <div id="legend">
-      <div class="leg-row"><div class="leg-dot" style="background:#3b82f644;border-color:#3b82f6"></div>1기 공모 (21)</div>
-      <div class="leg-row"><div class="leg-dot" style="background:#10b98144;border-color:#10b981"></div>2기 공모 (23)</div>
-      <div class="leg-row"><div class="leg-dot" style="background:#ef444444;border-color:#ef4444"></div>수시 선정 (83)</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#3b82f644;border-color:#3b82f6"></div>신속통합기획</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#8b5cf644;border-color:#8b5cf6"></div>일반 정비사업</div>
+      <div class="leg-row"><div class="leg-dot" style="background:#f59e0b66;border-color:#f59e0b"></div>중복 사업장</div>
     </div>
   </div>
 </div>
@@ -189,7 +189,9 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 <script>
 const BASE = 'https://cleanup.seoul.go.kr/share/cleanup/img/content/';
 const PAGE_URL = 'https://cleanup.seoul.go.kr/cleanup/view/publicIntgrPlanArea.do';
-const TYPE_COLOR = { "1기":"#3b82f6", "2기":"#10b981", "수시":"#ef4444" };
+const TYPE_COLOR = { "1기":"#3b82f6", "2기":"#3b82f6", "수시":"#3b82f6" };
+const GENERAL_COLOR = '#8b5cf6';
+const OVERLAP_COLOR = '#f59e0b';
 const TYPE_LABEL = { "1기":"1기 공모 선정구역", "2기":"2기 공모 선정구역", "수시":"수시 선정구역" };
 
 // img: 실제 서울시 사이트 이미지 파일명, owners: 토지등소유자, zone: 용도지역
@@ -329,7 +331,8 @@ const ZONES = [
 ];
 
 // ── 지도 초기화 ────────────────────────────────────────────────────────────
-const map = L.map('map', { center:[37.565,126.980], zoom:12, zoomControl:true, preferCanvas:true });
+const SEOUL_BOUNDS = L.latLngBounds([[37.413,126.734],[37.715,127.270]]);
+const map = L.map('map', { center:[37.565,126.980], zoom:12, minZoom:11, maxBounds:SEOUL_BOUNDS, maxBoundsViscosity:1, zoomControl:true, preferCanvas:true });
 
 const osmTile = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom:19,
@@ -347,6 +350,7 @@ function areaToRadius(areaStr) {
 }
 
 let zoneCircles = [];
+let generalMarkers = [];
 let activeCircle = null;
 
 function openPanel(zone, circle) {
@@ -359,6 +363,7 @@ function openPanel(zone, circle) {
 
   const c = TYPE_COLOR[zone.type];
   const panel = document.getElementById('side-panel');
+  document.getElementById('panel-img-wrap').style.display = 'block';
 
   // 이미지
   const imgEl = document.getElementById('panel-img');
@@ -421,20 +426,61 @@ ZONES.forEach(zone => {
   });
 
   circle._zoneType = zone.type;
+  circle._category = 'sintong';
   zoneCircles.push(circle);
 });
+
+function normalize(value) { return (value || '').replace(/[\s()·,.-]/g, '').replace(/구역|정비사업|조합/g, ''); }
+function isOverlap(project) {
+  const address = normalize(project.address);
+  const name = normalize(project.name);
+  return ZONES.some(zone => zone.gu === project.gu && (name.includes(normalize(zone.name)) || normalize(zone.name).includes(name) || (address.length > 4 && normalize(zone.addr).includes(address))));
+}
+function openGeneralPanel(project, overlap) {
+  const panel = document.getElementById('side-panel');
+  document.getElementById('panel-img-wrap').style.display = 'none';
+  document.getElementById('panel-type').textContent = overlap ? '중복 사업장 · 신속통합기획 + 일반 정비사업' : '일반 정비사업';
+  document.getElementById('panel-type').style.color = overlap ? OVERLAP_COLOR : GENERAL_COLOR;
+  document.getElementById('panel-name').textContent = project.name;
+  document.getElementById('panel-addr').textContent = `${project.gu} ${project.address}`;
+  const rows = [['사업구분', project.business_type], ['진행단계', project.stage || '-'], ['공개자료', project.public_data_count], ['자료충실도', project.completeness]];
+  document.getElementById('panel-info').innerHTML = rows.map(([l,v]) => `<div class="info-row"><span class="info-label">${l}</span><span class="info-val">${v || '-'}</span></div>`).join('');
+  document.getElementById('panel-link').href = project.source_url;
+  document.getElementById('panel-link').textContent = '서울시 정비사업 정보몽땅에서 보기 ↗';
+  panel.classList.add('open');
+  setTimeout(() => map.invalidateSize(), 0);
+}
+async function loadGeneralProjects() {
+  try {
+    const response = await fetch('./data/general-projects.json');
+    const { projects = [] } = await response.json();
+    projects.filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng)).forEach(project => {
+      const overlap = isOverlap(project);
+      const color = overlap ? OVERLAP_COLOR : GENERAL_COLOR;
+      const marker = L.circleMarker([project.lat, project.lng], { radius: overlap ? 8 : 6, color, weight: 2, fillColor: color, fillOpacity: .85 }).addTo(map);
+      marker._category = overlap ? 'overlap' : 'general';
+      marker.on('click', () => openGeneralPanel(project, overlap));
+      generalMarkers.push(marker);
+    });
+  } catch (error) { console.warn('일반 정비사업 데이터를 불러오지 못했습니다.', error); }
+}
+loadGeneralProjects();
 
 // ── 필터 ─────────────────────────────────────────────────────────────────
 function setFilter(f) {
   closePanel();
-  ['all','1기','2기','수시'].forEach((v,i)=>{
+  ['all','sintong','general','overlap'].forEach((v,i)=>{
     const ids=['btn-all','btn-1','btn-2','btn-s'];
     const cls=['on-all','on-1','on-2','on-s'];
     document.getElementById(ids[i]).className = 'fbtn' + (v===f ? ' '+cls[i] : '');
   });
   zoneCircles.forEach((c,i)=>{
-    const show = f==='all' || ZONES[i].type===f;
+    const show = f==='all' || f==='sintong';
     show ? (map.hasLayer(c)||c.addTo(map)) : (map.hasLayer(c)&&map.removeLayer(c));
+  });
+  generalMarkers.forEach(marker => {
+    const show = f==='all' || marker._category===f;
+    show ? (map.hasLayer(marker)||marker.addTo(map)) : (map.hasLayer(marker)&&map.removeLayer(marker));
   });
 }
 
