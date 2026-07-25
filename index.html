@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>서울 신통기획 선정구역 지도</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=4q4cmzubrc"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:#1a1a2e; }
@@ -105,14 +104,9 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 .leg-row:last-child { margin-bottom:0; }
 .leg-dot { width:10px; height:10px; border-radius:50%; border:2px solid; flex-shrink:0; }
 
-/* 툴팁 */
-.sub-tip.leaflet-tooltip {
-  background:rgba(10,10,30,0.9); border:1px solid #3a3a5e;
-  color:#d0d0ff; font-size:11px; padding:3px 8px; border-radius:5px;
-  font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+.subway-marker {
+  width:7px; height:7px; border-radius:50%; border:1.5px solid #fff; opacity:.9;
 }
-.sub-tip.leaflet-tooltip::before { display:none; }
-.leaflet-control-attribution { font-size:9px!important; opacity:.6; }
 
 /* 로딩 */
 #loading-msg {
@@ -331,17 +325,28 @@ const ZONES = [
 ];
 
 // ── 지도 초기화 ────────────────────────────────────────────────────────────
-const SEOUL_BOUNDS = L.latLngBounds([[37.413,126.734],[37.715,127.270]]);
-const map = L.map('map', { center:[37.565,126.980], zoom:12, minZoom:11, maxBounds:SEOUL_BOUNDS, maxBoundsViscosity:1, zoomControl:true, preferCanvas:true });
-
-const osmTile = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  maxZoom:19,
-  attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-  crossOrigin:true,
+const SEOUL_BOUNDS = new naver.maps.LatLngBounds(
+  new naver.maps.LatLng(37.413, 126.734),
+  new naver.maps.LatLng(37.715, 127.270)
+);
+const map = new naver.maps.Map('map', {
+  center: new naver.maps.LatLng(37.565, 126.980),
+  zoom: 12,
+  minZoom: 11,
+  maxBounds: SEOUL_BOUNDS,
+  mapTypeControl: true,
+  scaleControl: false,
+  logoControl: true,
+  mapDataControl: true,
 });
-osmTile.addTo(map);
-osmTile.on('load', () => { const m=document.getElementById('loading-msg'); if(m) m.style.display='none'; });
-setTimeout(()=>{ const m=document.getElementById('loading-msg'); if(m) m.style.display='none'; }, 3000);
+naver.maps.Event.once(map, 'idle', () => {
+  const message = document.getElementById('loading-msg');
+  if (message) message.style.display = 'none';
+});
+setTimeout(() => {
+  const message = document.getElementById('loading-msg');
+  if (message) message.style.display = 'none';
+}, 5000);
 
 // ── 원형 구역 마커 ────────────────────────────────────────────────────────
 function areaToRadius(areaStr) {
@@ -353,13 +358,20 @@ let zoneCircles = [];
 let generalMarkers = [];
 let activeCircle = null;
 
+function refreshMap() { setTimeout(() => map.autoResize(), 0); }
+function setOverlayVisible(overlay, visible) {
+  overlay.setMap(visible ? map : null);
+  overlay._visible = visible;
+}
+function setCircleStyle(circle, options) { circle.setOptions(options); }
+
 function openPanel(zone, circle) {
   // 이전 활성 원 복원
   if (activeCircle && activeCircle !== circle) {
-    activeCircle.setStyle({ weight:2.5, opacity:0.9, fillOpacity:0.18 });
+    setCircleStyle(activeCircle, { strokeWeight:2.5, strokeOpacity:0.9, fillOpacity:0.18 });
   }
   activeCircle = circle;
-  circle.setStyle({ weight:3.5, opacity:1, fillOpacity:0.32 });
+  setCircleStyle(circle, { strokeWeight:3.5, strokeOpacity:1, fillOpacity:0.32, zIndex:10 });
 
   const c = TYPE_COLOR[zone.type];
   const panel = document.getElementById('side-panel');
@@ -391,17 +403,18 @@ function openPanel(zone, circle) {
   document.getElementById('panel-link').href = PAGE_URL;
 
   panel.classList.add('open');
-  setTimeout(() => map.invalidateSize(), 0);
+  refreshMap();
 
   // 모바일이면 지도 중심 이동
-  map.setView([zone.lat, zone.lng], Math.max(map.getZoom(), 14));
+  map.setCenter(new naver.maps.LatLng(zone.lat, zone.lng));
+  map.setZoom(Math.max(map.getZoom(), 14));
 }
 
 function closePanel() {
   document.getElementById('side-panel').classList.remove('open');
-  setTimeout(() => map.invalidateSize(), 0);
+  refreshMap();
   if (activeCircle) {
-    activeCircle.setStyle({ weight:2.5, opacity:0.9, fillOpacity:0.18 });
+    setCircleStyle(activeCircle, { strokeWeight:2.5, strokeOpacity:0.9, fillOpacity:0.18, zIndex:1 });
     activeCircle = null;
   }
 }
@@ -413,20 +426,23 @@ function imgFallback() {
 
 ZONES.forEach(zone => {
   const c = TYPE_COLOR[zone.type];
-  const circle = L.circle([zone.lat, zone.lng], {
+  const circle = new naver.maps.Circle({
+    map,
+    center: new naver.maps.LatLng(zone.lat, zone.lng),
     radius: areaToRadius(zone.area),
-    color: c, weight:2.5, opacity:0.9,
-    fillColor:c, fillOpacity:0.18,
-  }).addTo(map);
+    strokeColor: c, strokeWeight:2.5, strokeOpacity:0.9,
+    fillColor:c, fillOpacity:0.18, clickable:true, zIndex:1,
+  });
 
-  circle.on('click', () => openPanel(zone, circle));
-  circle.on('mouseover', function() { this.setStyle({ weight:3.5, fillOpacity:0.3 }); this.bringToFront(); });
-  circle.on('mouseout',  function() {
-    if (this !== activeCircle) this.setStyle({ weight:2.5, fillOpacity:0.18 });
+  naver.maps.Event.addListener(circle, 'click', () => openPanel(zone, circle));
+  naver.maps.Event.addListener(circle, 'mouseover', () => setCircleStyle(circle, { strokeWeight:3.5, fillOpacity:0.3, zIndex:10 }));
+  naver.maps.Event.addListener(circle, 'mouseout', () => {
+    if (circle !== activeCircle) setCircleStyle(circle, { strokeWeight:2.5, fillOpacity:0.18, zIndex:1 });
   });
 
   circle._zoneType = zone.type;
   circle._category = 'sintong';
+  circle._visible = true;
   zoneCircles.push(circle);
 });
 
@@ -448,7 +464,7 @@ function openGeneralPanel(project, overlap) {
   document.getElementById('panel-link').href = project.source_url;
   document.getElementById('panel-link').textContent = '서울시 정비사업 정보몽땅에서 보기 ↗';
   panel.classList.add('open');
-  setTimeout(() => map.invalidateSize(), 0);
+  refreshMap();
 }
 async function loadGeneralProjects() {
   try {
@@ -457,9 +473,20 @@ async function loadGeneralProjects() {
     projects.filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng)).forEach(project => {
       const overlap = isOverlap(project);
       const color = overlap ? OVERLAP_COLOR : GENERAL_COLOR;
-      const marker = L.circleMarker([project.lat, project.lng], { radius: overlap ? 8 : 6, color, weight: 2, fillColor: color, fillOpacity: .85 }).addTo(map);
+      const size = overlap ? 16 : 12;
+      const marker = new naver.maps.Marker({
+        map,
+        position: new naver.maps.LatLng(project.lat, project.lng),
+        title: project.name,
+        zIndex: overlap ? 20 : 5,
+        icon: {
+          content: `<span style="display:block;width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 4px #0008"></span>`,
+          anchor: new naver.maps.Point(size / 2, size / 2),
+        },
+      });
       marker._category = overlap ? 'overlap' : 'general';
-      marker.on('click', () => openGeneralPanel(project, overlap));
+      marker._visible = true;
+      naver.maps.Event.addListener(marker, 'click', () => openGeneralPanel(project, overlap));
       generalMarkers.push(marker);
     });
   } catch (error) { console.warn('일반 정비사업 데이터를 불러오지 못했습니다.', error); }
@@ -474,13 +501,13 @@ function setFilter(f) {
     const cls=['on-all','on-1','on-2','on-s'];
     document.getElementById(ids[i]).className = 'fbtn' + (v===f ? ' '+cls[i] : '');
   });
-  zoneCircles.forEach((c,i)=>{
+  zoneCircles.forEach(c => {
     const show = f==='all' || f==='sintong';
-    show ? (map.hasLayer(c)||c.addTo(map)) : (map.hasLayer(c)&&map.removeLayer(c));
+    setOverlayVisible(c, show);
   });
   generalMarkers.forEach(marker => {
     const show = f==='all' || marker._category===f;
-    show ? (map.hasLayer(marker)||marker.addTo(map)) : (map.hasLayer(marker)&&map.removeLayer(marker));
+    setOverlayVisible(marker, show);
   });
 }
 
@@ -499,29 +526,29 @@ const STATIONS = [
   ["개화","9",37.5793,126.8011],["가양","9",37.5612,126.8655],["당산","9",37.5336,126.9019],["여의도","9",37.5217,126.9245],["동작","9",37.5096,126.9799],["고속터미널","9",37.5044,127.0049],["신논현","9",37.5046,127.0254],
 ];
 
-const subwayGroup = L.layerGroup();
+const subwayMarkers = [];
 STATIONS.forEach(([name,line,lat,lng])=>{
   const c = LINE_COLORS[line]||'#888';
-  const icon = L.divIcon({
-    className:'',
-    html:`<div style="width:7px;height:7px;border-radius:50%;background:${c};border:1.5px solid #fff;opacity:.9"></div>`,
-    iconSize:[7,7], iconAnchor:[3.5,3.5],
+  const marker = new naver.maps.Marker({
+    map,
+    position: new naver.maps.LatLng(lat, lng),
+    title: `${name} ${line}호선`,
+    zIndex: 0,
+    icon: {
+      content: `<span class="subway-marker" style="background:${c}"></span>`,
+      anchor: new naver.maps.Point(3.5, 3.5),
+    },
   });
-  L.marker([lat,lng],{icon,zIndexOffset:-200})
-    .bindTooltip(`<b>${name}</b> <span style="color:${c}">${line}호선</span>`,{direction:'top',offset:[0,-5],className:'sub-tip'})
-    .addTo(subwayGroup);
+  marker._visible = true;
+  subwayMarkers.push(marker);
 });
-subwayGroup.addTo(map);
-
-const tStyle = document.createElement('style');
-tStyle.textContent = `.sub-tip.leaflet-tooltip{background:rgba(10,10,30,.9);border:1px solid #3a3a5e;color:#d0d0ff;font-size:11px;padding:3px 8px;border-radius:5px;font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif}.sub-tip.leaflet-tooltip::before{display:none}.leaflet-control-attribution{font-size:9px!important;opacity:.6}`;
-document.head.appendChild(tStyle);
 
 let subwayOn = true;
 function toggleSubway(){
   const btn = document.getElementById('btn-sub');
-  if(subwayOn){ map.removeLayer(subwayGroup); btn.textContent='지하철역 표시'; btn.className='fbtn'; }
-  else        { subwayGroup.addTo(map);        btn.textContent='지하철역 숨기기'; btn.className='fbtn on-sub'; }
+  subwayMarkers.forEach(marker => setOverlayVisible(marker, !subwayOn));
+  if(subwayOn){ btn.textContent='지하철역 표시'; btn.className='fbtn'; }
+  else        { btn.textContent='지하철역 숨기기'; btn.className='fbtn on-sub'; }
   subwayOn = !subwayOn;
 }
 </script>
