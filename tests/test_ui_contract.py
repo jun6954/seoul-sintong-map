@@ -31,7 +31,9 @@ class UiContractTests(unittest.TestCase):
     def test_dropdown_and_map_click_share_the_selection_and_centering_path(self):
         self.assertIn("naver.maps.Event.addListener(circle, 'click', () => selectProjectItem(item))", HTML)
         self.assertIn("naver.maps.Event.addListener(overlay, 'click', () => selectProjectItem(item))", HTML)
-        self.assertIn("map.setCenter(new naver.maps.LatLng(project.lat, project.lng));", HTML)
+        self.assertIn("function moveMapTo(position, minimumZoom)", HTML)
+        self.assertIn("map.morph(position, Math.max(map.getZoom(), minimumZoom), { duration:700, easing:'easeOutCubic' });", HTML)
+        self.assertIn("moveMapTo(new naver.maps.LatLng(project.lat, project.lng), 15);", HTML)
 
     def test_obsolete_subway_controls_are_removed(self):
         self.assertNotIn("toggleSubway", HTML)

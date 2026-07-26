@@ -424,6 +424,9 @@ function setOverlayVisible(overlay, visible) {
   overlay._visible = visible;
 }
 function setCircleStyle(circle, options) { circle.setOptions(options); }
+function moveMapTo(position, minimumZoom) {
+  map.morph(position, Math.max(map.getZoom(), minimumZoom), { duration:700, easing:'easeOutCubic' });
+}
 function restoreZoneCircle(circle) {
   const color = TYPE_COLOR[circle._zone.type];
   setCircleStyle(circle, { strokeColor:color, strokeWeight:2.5, strokeOpacity:0.9, fillColor:color, fillOpacity:0.18, zIndex:1 });
@@ -471,8 +474,7 @@ function openPanel(zone, circle) {
   refreshMap();
 
   // 모바일이면 지도 중심 이동
-  map.setCenter(new naver.maps.LatLng(zone.lat, zone.lng));
-  map.setZoom(Math.max(map.getZoom(), 14));
+  moveMapTo(new naver.maps.LatLng(zone.lat, zone.lng), 14);
 }
 
 function closePanel() {
@@ -637,8 +639,7 @@ function selectProjectItem(item) {
   const { project, feature } = item;
   openGeneralPanel(project, item.label === '중복 사업장');
   if (!feature) return setAddressSearchStatus('이 사업장은 서울시 공식 지도 경계가 아직 공개되지 않았습니다.');
-  map.setCenter(new naver.maps.LatLng(project.lat, project.lng));
-  map.setZoom(Math.max(map.getZoom(), 15));
+  moveMapTo(new naver.maps.LatLng(project.lat, project.lng), 15);
   highlightGeneralFeature(feature);
   setAddressSearchStatus(`${item.label} 영역을 붉은색으로 표시했습니다.`);
 }
@@ -781,8 +782,7 @@ function searchAddress(event) {
     const position = new naver.maps.LatLng(lat, lng);
     if (addressSearchMarker) addressSearchMarker.setMap(null);
     addressSearchMarker = new naver.maps.Marker({ map, position, title: result.roadAddress || result.jibunAddress || query, zIndex: 100 });
-    map.setCenter(position);
-    map.setZoom(Math.max(map.getZoom(), 16));
+    moveMapTo(position, 16);
     setAddressSearchStatus(result.roadAddress || result.jibunAddress || '검색 결과로 이동했습니다.');
   });
 }
