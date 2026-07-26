@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>서울 신통기획 선정구역 지도</title>
 <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=4q4cmzubrc&submodules=geocoder"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:#1a1a2e; }
@@ -66,15 +67,23 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 .list-summary { color:#8a8ab0; font-size:12px; margin-bottom:12px; }
 #project-list { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:9px; }
 .project-card {
-  padding:13px; border:1px solid #2d2d4e; border-radius:9px; background:#1a1a2e;
-  color:#e0e0ff; text-align:left; cursor:pointer; font:inherit;
+  position:relative; border:1px solid #2d2d4e; border-radius:9px; background:#1a1a2e;
+  color:#e0e0ff; font:inherit;
 }
-.project-card:hover, .project-card:focus { border-color:#60a5fa; background:#202044; outline:none; }
+.project-card:hover { border-color:#60a5fa; background:#202044; }
+.project-card-select { display:block; width:100%; padding:13px 45px 13px 13px; border:0; background:transparent; color:inherit; text-align:left; cursor:pointer; font:inherit; }
+.project-card-select:focus { outline:none; }
+.project-card:has(.project-card-select:focus) { border-color:#60a5fa; background:#202044; }
 .project-card-title { display:block; font-size:13px; font-weight:700; line-height:1.35; }
 .project-card-meta { display:block; margin-top:5px; color:#8a8ab0; font-size:11px; line-height:1.4; }
 .project-card-type { color:#60a5fa; }
 .project-card-type.overlap { color:#fbbf24; }
 .project-card-type.general { color:#c4b5fd; }
+.favorite-button { position:absolute; top:9px; right:9px; width:29px; height:29px; border:1px solid #3a3a5e; border-radius:50%; background:#121225; color:#8a8ab0; cursor:pointer; font-size:16px; line-height:1; }
+.favorite-button:hover, .favorite-button:focus { border-color:#fbbf24; color:#fbbf24; outline:none; }
+.favorite-button.is-favorite { border-color:#f59e0b; color:#fbbf24; }
+#auth-status { display:none; color:#fbbf24; font-size:11px; max-width:230px; }
+#auth-status.show { display:block; }
 .overlap-menu { width:280px; padding:12px; border:1px solid #3a3a5e; border-radius:10px; background:#15152a; color:#e0e0ff; box-shadow:0 10px 28px rgba(0,0,0,.4); }
 .overlap-menu-title { margin-bottom:8px; color:#a0a0c0; font-size:11px; font-weight:700; }
 .overlap-choice { display:block; width:100%; padding:8px; border:0; border-radius:6px; background:transparent; color:#f0f0ff; text-align:left; cursor:pointer; font:inherit; }
@@ -199,6 +208,8 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
     <button class="fbtn" id="btn-2"   onclick="setFilter('general')">일반 정비사업</button>
     <button class="fbtn" id="btn-s"   onclick="setFilter('overlap')">중복 사업장</button>
     <button class="fbtn" id="btn-view" onclick="toggleView()">리스트 보기</button>
+    <button class="fbtn" id="auth-button" onclick="toggleAuth()">로그인</button>
+    <span id="auth-status" role="status" aria-live="polite"></span>
     <form class="address-search" onsubmit="searchAddress(event)">
       <input id="address-input" type="search" autocomplete="street-address" placeholder="도로명주소·지번 검색" aria-label="도로명주소 또는 지번 검색" oninput="updateAddressSuggestions()" onfocus="updateAddressSuggestions()" onkeydown="handleAddressSearchKeydown(event)">
       <button class="fbtn on-1" id="address-search-btn" type="submit">주소 검색</button>
@@ -247,6 +258,8 @@ const TYPE_COLOR = { "1기":"#3b82f6", "2기":"#3b82f6", "수시":"#3b82f6" };
 const GENERAL_COLOR = '#8b5cf6';
 const OVERLAP_COLOR = '#f59e0b';
 const TYPE_LABEL = { "1기":"1기 공모 선정구역", "2기":"2기 공모 선정구역", "수시":"수시 선정구역" };
+const SUPABASE_URL = 'https://mkavcqgbtanhzolbrjzo.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_-BKSwH7VFS3ASD6hzFlwUQ_XHm3XJuY';
 
 // img: 실제 서울시 사이트 이미지 파일명, owners: 토지등소유자, zone: 용도지역
 const ZONES = [
@@ -424,8 +437,89 @@ let showingList = false;
 let activeSearchItem = null;
 let overlapCandidates = [];
 let overlapInfoWindow = null;
+let supabaseClient = null;
+let currentUser = null;
+let favoriteProjectKeys = new Set();
 
 function refreshMap() { setTimeout(() => map.autoResize(), 0); }
+function setAuthStatus(message) {
+  const status = document.getElementById('auth-status');
+  status.textContent = message;
+  status.classList.toggle('show', Boolean(message));
+}
+function projectKey(item) {
+  return [item.type, item.name, item.address].join('::');
+}
+function isFavorite(item) {
+  return favoriteProjectKeys.has(projectKey(item));
+}
+function updateAuthButton() {
+  document.getElementById('auth-button').textContent = currentUser ? '로그아웃' : '로그인';
+}
+async function loadFavorites() {
+  favoriteProjectKeys = new Set();
+  if (!supabaseClient || !currentUser) return;
+  const { data, error } = await supabaseClient
+    .from('favorites')
+    .select('project_key')
+    .eq('user_id', currentUser.id);
+  if (error) {
+    console.warn('즐겨찾기를 불러오지 못했습니다.', error);
+    return setAuthStatus('즐겨찾기를 불러오지 못했습니다. Supabase 설정을 확인해 주세요.');
+  }
+  favoriteProjectKeys = new Set(data.map(row => row.project_key));
+}
+async function applyAuthUser(user) {
+  currentUser = user || null;
+  setAuthStatus(currentUser ? `${currentUser.email || '로그인'} 계정으로 동기화 중입니다.` : '');
+  await loadFavorites();
+  updateAuthButton();
+  if (showingList) renderList();
+}
+async function initializeFavorites() {
+  if (!window.supabase) return setAuthStatus('즐겨찾기 연결을 초기화하지 못했습니다.');
+  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+  const { data, error } = await supabaseClient.auth.getSession();
+  if (error) return setAuthStatus('로그인 상태를 확인하지 못했습니다.');
+  await applyAuthUser(data.session?.user);
+  supabaseClient.auth.onAuthStateChange((_event, session) => {
+    window.setTimeout(() => applyAuthUser(session?.user), 0);
+  });
+}
+async function sendMagicLink() {
+  if (!supabaseClient) return setAuthStatus('즐겨찾기 연결을 초기화하지 못했습니다.');
+  const email = window.prompt('즐겨찾기를 동기화할 이메일 주소를 입력해 주세요.');
+  if (!email) return;
+  setAuthStatus('로그인 링크를 보내는 중입니다...');
+  const { error } = await supabaseClient.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: `${window.location.origin}${window.location.pathname}` },
+  });
+  setAuthStatus(error ? '로그인 링크를 보내지 못했습니다. Supabase 인증 설정을 확인해 주세요.' : '이메일의 로그인 링크를 열어 주세요.');
+}
+async function toggleAuth() {
+  if (!currentUser) return sendMagicLink();
+  const { error } = await supabaseClient.auth.signOut();
+  if (error) setAuthStatus('로그아웃하지 못했습니다. 다시 시도해 주세요.');
+}
+async function toggleFavorite(item, event) {
+  event.stopPropagation();
+  if (!currentUser) return sendMagicLink();
+  const key = projectKey(item);
+  const wasFavorite = favoriteProjectKeys.has(key);
+  if (wasFavorite) favoriteProjectKeys.delete(key);
+  else favoriteProjectKeys.add(key);
+  renderList();
+  const query = wasFavorite
+    ? supabaseClient.from('favorites').delete().eq('user_id', currentUser.id).eq('project_key', key)
+    : supabaseClient.from('favorites').upsert({ user_id: currentUser.id, project_key: key }, { onConflict: 'user_id,project_key' });
+  const { error } = await query;
+  if (!error) return;
+  if (wasFavorite) favoriteProjectKeys.add(key);
+  else favoriteProjectKeys.delete(key);
+  renderList();
+  setAuthStatus('즐겨찾기를 저장하지 못했습니다. Supabase 설정을 확인해 주세요.');
+}
 function setOverlayVisible(overlay, visible) {
   const overlays = overlay.overlays || [overlay];
   overlays.forEach(item => item.setMap(visible ? map : null));
@@ -680,6 +774,7 @@ async function loadGeneralProjects() {
   } catch (error) { console.warn('일반 정비사업 데이터를 불러오지 못했습니다.', error); }
 }
 loadGeneralProjects();
+initializeFavorites();
 
 function highlightZoneCircle(circle) {
   setCircleStyle(circle, { strokeColor:'#ef4444', strokeWeight:4, strokeOpacity:1, fillColor:'#ef4444', fillOpacity:.32, zIndex:100 });
@@ -738,14 +833,22 @@ function renderList() {
   const list = document.getElementById('project-list');
   list.replaceChildren();
   items.forEach(item => {
-    const card = document.createElement('button');
-    card.type = 'button'; card.className = 'project-card';
+    const card = document.createElement('article'); card.className = 'project-card';
+    const selectButton = document.createElement('button');
+    selectButton.type = 'button'; selectButton.className = 'project-card-select';
     const title = document.createElement('span'); title.className = 'project-card-title'; title.textContent = item.name;
     const meta = document.createElement('span'); meta.className = 'project-card-meta';
     const type = document.createElement('span'); type.className = `project-card-type ${item.label === '중복 사업장' ? 'overlap' : item.type === 'general' ? 'general' : ''}`; type.textContent = item.label;
     meta.append(type, document.createTextNode(` · ${item.address}`));
-    card.append(title, meta);
-    card.addEventListener('click', () => selectProjectItem(item));
+    selectButton.append(title, meta);
+    selectButton.addEventListener('click', () => selectProjectItem(item));
+    const favorite = document.createElement('button');
+    favorite.type = 'button'; favorite.className = `favorite-button${isFavorite(item) ? ' is-favorite' : ''}`;
+    favorite.textContent = isFavorite(item) ? '★' : '☆';
+    favorite.setAttribute('aria-label', `${item.name} ${isFavorite(item) ? '즐겨찾기 해제' : '즐겨찾기 추가'}`);
+    favorite.title = currentUser ? favorite.getAttribute('aria-label') : '로그인 후 즐겨찾기';
+    favorite.addEventListener('click', event => toggleFavorite(item, event));
+    card.append(selectButton, favorite);
     list.append(card);
   });
 }
