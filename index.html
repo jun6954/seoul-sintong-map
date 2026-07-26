@@ -500,21 +500,21 @@ ZONES.forEach(zone => {
     fillColor:c, fillOpacity:0.18, clickable:true, zIndex:1,
   });
 
-  naver.maps.Event.addListener(circle, 'click', () => openPanel(zone, circle));
-  naver.maps.Event.addListener(circle, 'mouseover', () => setCircleStyle(circle, { strokeWeight:3.5, fillOpacity:0.3, zIndex:10 }));
-  naver.maps.Event.addListener(circle, 'mouseout', () => {
-    if (circle !== activeCircle && activeSearchItem?.circle !== circle) restoreZoneCircle(circle);
-  });
-
   circle._zoneType = zone.type;
   circle._zone = zone;
   circle._category = 'sintong';
   circle._visible = true;
   zoneCircles.push(circle);
-  addressSearchItems.push({
+  const item = {
     type: 'sintong', zone, circle,
     name: zone.name, address: `${zone.gu} ${zone.addr}`,
     label: '신속통합기획',
+  };
+  addressSearchItems.push(item);
+  naver.maps.Event.addListener(circle, 'click', () => selectProjectItem(item));
+  naver.maps.Event.addListener(circle, 'mouseover', () => setCircleStyle(circle, { strokeWeight:3.5, fillOpacity:0.3, zIndex:10 }));
+  naver.maps.Event.addListener(circle, 'mouseout', () => {
+    if (circle !== activeCircle && activeSearchItem?.circle !== circle) restoreZoneCircle(circle);
   });
 });
 
@@ -588,9 +588,9 @@ async function loadGeneralProjects() {
         },
       })];
       const feature = { overlays, _category: overlap ? 'overlap' : 'general', _visible: true, _color:color, _overlap:overlap };
-      overlays.forEach(overlay => naver.maps.Event.addListener(overlay, 'click', () => openGeneralPanel(project, overlap)));
-      generalMarkers.push(feature);
       item.feature = feature;
+      overlays.forEach(overlay => naver.maps.Event.addListener(overlay, 'click', () => selectProjectItem(item)));
+      generalMarkers.push(feature);
     });
     updateAddressSuggestions();
     if (showingList) renderList();
