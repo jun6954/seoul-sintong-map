@@ -8,7 +8,7 @@
 - 구역 면적에 비례한 원형 마커·공식 사업 경계 폴리곤·상세 정보 패널
 - 도로명·지번 검색과 사업지 주소 자동완성
 - 겹치는 사업지 선택 메뉴와 지도/리스트 보기
-- Supabase 이메일 매직링크 로그인 기반 즐겨찾기 동기화
+- 전용 비밀 링크 기반 즐겨찾기 동기화(로그인 불필요)
 - 모바일·태블릿·데스크톱 반응형 레이아웃
 - 서울시 공식 목록을 매일 동기화하는 GitHub Actions 배치
 
@@ -27,10 +27,11 @@ GitHub Actions는 매일 05:15(KST)에 일반 정비사업 목록을 수집하�
 ## 즐겨찾기 Supabase 설정
 
 1. Supabase Dashboard의 **SQL Editor**에서 [`supabase/migrations/20260726_create_favorites.sql`](supabase/migrations/20260726_create_favorites.sql) 전체를 실행합니다.
-2. **Authentication → URL Configuration**에서 Site URL과 Additional Redirect URLs에 `https://jun6954.github.io/seoul-sintong-map/`를 추가합니다.
-3. Email 로그인 기능을 활성화합니다. 지도에서 **로그인**을 누르고 이메일로 받은 링크를 열면, 모든 브라우저·기기에서 동일한 즐겨찾기가 표시됩니다.
+2. **Edge Functions**에서 `shared-favorites` 함수를 생성한 뒤 [`supabase/functions/shared-favorites/index.ts`](supabase/functions/shared-favorites/index.ts)의 내용을 배포합니다. `supabase/config.toml`의 설정처럼 JWT 검증은 끕니다.
+3. **Edge Function Secrets**에 `FAVORITES_SHARE_SECRET`을 등록합니다. 이 값은 전용 링크의 `#favorites=` 뒤 값과 반드시 같아야 합니다.
+4. 전용 링크를 아내분의 기기에만 전달합니다. 예: `https://jun6954.github.io/seoul-sintong-map/#favorites=<FAVORITES_SHARE_SECRET>`
 
-클라이언트에는 Supabase Publishable key만 포함되며, 행 수준 보안(RLS) 정책으로 각 사용자는 자신의 즐겨찾기만 읽고 수정할 수 있습니다. secret/service_role 키는 절대 브라우저 코드에 넣지 않습니다.
+즐겨찾기 테이블은 RLS와 권한 회수로 브라우저의 데이터 API에서 완전히 차단됩니다. Edge Function 내부의 비밀 키가 전용 링크 키를 검증한 뒤에만 읽고 쓰므로, secret/service_role 키는 브라우저 코드에 포함되지 않습니다. 전용 링크를 아는 사람은 즐겨찾기를 바꿀 수 있으므로 비밀번호처럼 보관해야 합니다.
 
 ## 배포
 

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>서울 신통기획 선정구역 지도</title>
 <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=4q4cmzubrc&submodules=geocoder"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:#1a1a2e; }
@@ -82,8 +81,8 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 .favorite-button { position:absolute; top:9px; right:9px; width:29px; height:29px; border:1px solid #3a3a5e; border-radius:50%; background:#121225; color:#8a8ab0; cursor:pointer; font-size:16px; line-height:1; }
 .favorite-button:hover, .favorite-button:focus { border-color:#fbbf24; color:#fbbf24; outline:none; }
 .favorite-button.is-favorite { border-color:#f59e0b; color:#fbbf24; }
-#auth-status { display:none; color:#fbbf24; font-size:11px; max-width:230px; }
-#auth-status.show { display:block; }
+#favorite-status { display:none; color:#fbbf24; font-size:11px; max-width:230px; }
+#favorite-status.show { display:block; }
 .overlap-menu { width:280px; padding:12px; border:1px solid #3a3a5e; border-radius:10px; background:#15152a; color:#e0e0ff; box-shadow:0 10px 28px rgba(0,0,0,.4); }
 .overlap-menu-title { margin-bottom:8px; color:#a0a0c0; font-size:11px; font-weight:700; }
 .overlap-choice { display:block; width:100%; padding:8px; border:0; border-radius:6px; background:transparent; color:#f0f0ff; text-align:left; cursor:pointer; font:inherit; }
@@ -208,8 +207,7 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
     <button class="fbtn" id="btn-2"   onclick="setFilter('general')">일반 정비사업</button>
     <button class="fbtn" id="btn-s"   onclick="setFilter('overlap')">중복 사업장</button>
     <button class="fbtn" id="btn-view" onclick="toggleView()">리스트 보기</button>
-    <button class="fbtn" id="auth-button" onclick="toggleAuth()">로그인</button>
-    <span id="auth-status" role="status" aria-live="polite"></span>
+    <span id="favorite-status" role="status" aria-live="polite"></span>
     <form class="address-search" onsubmit="searchAddress(event)">
       <input id="address-input" type="search" autocomplete="street-address" placeholder="도로명주소·지번 검색" aria-label="도로명주소 또는 지번 검색" oninput="updateAddressSuggestions()" onfocus="updateAddressSuggestions()" onkeydown="handleAddressSearchKeydown(event)">
       <button class="fbtn on-1" id="address-search-btn" type="submit">주소 검색</button>
@@ -437,13 +435,12 @@ let showingList = false;
 let activeSearchItem = null;
 let overlapCandidates = [];
 let overlapInfoWindow = null;
-let supabaseClient = null;
-let currentUser = null;
 let favoriteProjectKeys = new Set();
+let favoriteAccessToken = null;
 
 function refreshMap() { setTimeout(() => map.autoResize(), 0); }
-function setAuthStatus(message) {
-  const status = document.getElementById('auth-status');
+function setFavoriteStatus(message) {
+  const status = document.getElementById('favorite-status');
   status.textContent = message;
   status.classList.toggle('show', Boolean(message));
 }
@@ -453,72 +450,51 @@ function projectKey(item) {
 function isFavorite(item) {
   return favoriteProjectKeys.has(projectKey(item));
 }
-function updateAuthButton() {
-  document.getElementById('auth-button').textContent = currentUser ? '로그아웃' : '로그인';
+function getFavoriteAccessToken() {
+  return new URLSearchParams(window.location.hash.slice(1)).get('favorites');
 }
-async function loadFavorites() {
-  favoriteProjectKeys = new Set();
-  if (!supabaseClient || !currentUser) return;
-  const { data, error } = await supabaseClient
-    .from('favorites')
-    .select('project_key')
-    .eq('user_id', currentUser.id);
-  if (error) {
-    console.warn('즐겨찾기를 불러오지 못했습니다.', error);
-    return setAuthStatus('즐겨찾기를 불러오지 못했습니다. Supabase 설정을 확인해 주세요.');
-  }
-  favoriteProjectKeys = new Set(data.map(row => row.project_key));
-}
-async function applyAuthUser(user) {
-  currentUser = user || null;
-  setAuthStatus(currentUser ? `${currentUser.email || '로그인'} 계정으로 동기화 중입니다.` : '');
-  await loadFavorites();
-  updateAuthButton();
-  if (showingList) renderList();
+async function requestFavorites(action, projectKeyValue) {
+  const response = await fetch(`${SUPABASE_URL}/functions/v1/shared-favorites`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_PUBLISHABLE_KEY,
+      Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ token: favoriteAccessToken, action, projectKey: projectKeyValue }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || '즐겨찾기 요청에 실패했습니다.');
+  return data;
 }
 async function initializeFavorites() {
-  if (!window.supabase) return setAuthStatus('즐겨찾기 연결을 초기화하지 못했습니다.');
-  supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-  const { data, error } = await supabaseClient.auth.getSession();
-  if (error) return setAuthStatus('로그인 상태를 확인하지 못했습니다.');
-  await applyAuthUser(data.session?.user);
-  supabaseClient.auth.onAuthStateChange((_event, session) => {
-    window.setTimeout(() => applyAuthUser(session?.user), 0);
-  });
-}
-async function sendMagicLink() {
-  if (!supabaseClient) return setAuthStatus('즐겨찾기 연결을 초기화하지 못했습니다.');
-  const email = window.prompt('즐겨찾기를 동기화할 이메일 주소를 입력해 주세요.');
-  if (!email) return;
-  setAuthStatus('로그인 링크를 보내는 중입니다...');
-  const { error } = await supabaseClient.auth.signInWithOtp({
-    email,
-    options: { emailRedirectTo: `${window.location.origin}${window.location.pathname}` },
-  });
-  setAuthStatus(error ? '로그인 링크를 보내지 못했습니다. Supabase 인증 설정을 확인해 주세요.' : '이메일의 로그인 링크를 열어 주세요.');
-}
-async function toggleAuth() {
-  if (!currentUser) return sendMagicLink();
-  const { error } = await supabaseClient.auth.signOut();
-  if (error) setAuthStatus('로그아웃하지 못했습니다. 다시 시도해 주세요.');
+  favoriteAccessToken = getFavoriteAccessToken();
+  if (!favoriteAccessToken) return;
+  try {
+    const data = await requestFavorites('list');
+    favoriteProjectKeys = new Set(data.projectKeys || []);
+    if (showingList) renderList();
+  } catch (error) {
+    console.warn('즐겨찾기를 불러오지 못했습니다.', error);
+    setFavoriteStatus('즐겨찾기를 불러오지 못했습니다. 전용 링크를 다시 확인해 주세요.');
+  }
 }
 async function toggleFavorite(item, event) {
   event.stopPropagation();
-  if (!currentUser) return sendMagicLink();
+  if (!favoriteAccessToken) return setFavoriteStatus('즐겨찾기는 전용 링크에서만 사용할 수 있습니다.');
   const key = projectKey(item);
   const wasFavorite = favoriteProjectKeys.has(key);
   if (wasFavorite) favoriteProjectKeys.delete(key);
   else favoriteProjectKeys.add(key);
   renderList();
-  const query = wasFavorite
-    ? supabaseClient.from('favorites').delete().eq('user_id', currentUser.id).eq('project_key', key)
-    : supabaseClient.from('favorites').upsert({ user_id: currentUser.id, project_key: key }, { onConflict: 'user_id,project_key' });
-  const { error } = await query;
-  if (!error) return;
-  if (wasFavorite) favoriteProjectKeys.add(key);
-  else favoriteProjectKeys.delete(key);
-  renderList();
-  setAuthStatus('즐겨찾기를 저장하지 못했습니다. Supabase 설정을 확인해 주세요.');
+  try {
+    await requestFavorites(wasFavorite ? 'remove' : 'add', key);
+  } catch (error) {
+    if (wasFavorite) favoriteProjectKeys.add(key);
+    else favoriteProjectKeys.delete(key);
+    renderList();
+    setFavoriteStatus('즐겨찾기를 저장하지 못했습니다. 전용 링크를 다시 확인해 주세요.');
+  }
 }
 function setOverlayVisible(overlay, visible) {
   const overlays = overlay.overlays || [overlay];
@@ -846,7 +822,7 @@ function renderList() {
     favorite.type = 'button'; favorite.className = `favorite-button${isFavorite(item) ? ' is-favorite' : ''}`;
     favorite.textContent = isFavorite(item) ? '★' : '☆';
     favorite.setAttribute('aria-label', `${item.name} ${isFavorite(item) ? '즐겨찾기 해제' : '즐겨찾기 추가'}`);
-    favorite.title = currentUser ? favorite.getAttribute('aria-label') : '로그인 후 즐겨찾기';
+    favorite.title = favoriteAccessToken ? favorite.getAttribute('aria-label') : '전용 링크에서 즐겨찾기 사용';
     favorite.addEventListener('click', event => toggleFavorite(item, event));
     card.append(selectButton, favorite);
     list.append(card);

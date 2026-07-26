@@ -43,13 +43,14 @@ class UiContractTests(unittest.TestCase):
         self.assertIn("이 위치에 겹친 사업지", HTML)
         self.assertNotIn("영역을 붉은색으로 표시했습니다.", HTML)
 
-    def test_synced_favorites_use_supabase_auth_and_project_keys(self):
-        self.assertIn("@supabase/supabase-js@2", HTML)
+    def test_synced_favorites_use_a_shared_link_and_project_keys(self):
         self.assertIn("function initializeFavorites()", HTML)
         self.assertIn("function toggleFavorite(item, event)", HTML)
         self.assertIn("function projectKey(item)", HTML)
-        self.assertIn("signInWithOtp", HTML)
-        self.assertIn("from('favorites')", HTML)
+        self.assertIn("function getFavoriteAccessToken()", HTML)
+        self.assertIn("functions/v1/shared-favorites", HTML)
+        self.assertIn("window.location.hash", HTML)
+        self.assertNotIn("signInWithOtp", HTML)
         self.assertNotIn("localStorage", HTML)
 
     def test_obsolete_subway_controls_are_removed(self):
