@@ -13,6 +13,13 @@ class UiContractTests(unittest.TestCase):
         self.assertIn("function isInsideSeoul(lat, lng)", HTML)
         self.assertIn("서울시 안의 주소만 검색할 수 있습니다.", HTML)
 
+    def test_address_input_suggests_known_project_addresses(self):
+        self.assertIn('id="address-suggestions"', HTML)
+        self.assertIn("function updateAddressSuggestions()", HTML)
+        self.assertIn("function selectAddressSuggestion(index)", HTML)
+        self.assertIn("addressSearchItems.push", HTML)
+        self.assertIn("서울시 공식 지도 경계가 아직 공개되지 않았습니다.", HTML)
+
     def test_obsolete_subway_controls_are_removed(self):
         self.assertNotIn("toggleSubway", HTML)
         self.assertNotIn("const STATIONS", HTML)

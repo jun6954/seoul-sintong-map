@@ -19,7 +19,7 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
   display:flex; gap:6px; align-items:center; flex-wrap:wrap;
   border-bottom:1px solid #2d2d4e; flex-shrink:0;
 }
-.address-search { display:flex; align-items:center; gap:6px; margin-left:auto; }
+.address-search { display:flex; align-items:center; gap:6px; margin-left:auto; position:relative; }
 #address-input {
   width:clamp(190px, 22vw, 290px); min-height:32px; padding:6px 11px;
   border:1px solid #3a3a5e; border-radius:20px; outline:none;
@@ -30,6 +30,21 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 #address-search-btn { min-height:32px; white-space:nowrap; }
 #address-search-status { display:none; font-size:11px; color:#fbbf24; max-width:240px; }
 #address-search-status.show { display:block; }
+#address-suggestions {
+  display:none; position:absolute; right:0; top:calc(100% + 6px); width:clamp(300px, 34vw, 430px);
+  max-height:300px; overflow-y:auto; z-index:1200; padding:5px;
+  background:rgba(15,15,30,.98); border:1px solid #3a3a5e; border-radius:9px;
+  box-shadow:0 12px 30px rgba(0,0,0,.35);
+}
+#address-suggestions.open { display:block; }
+.address-suggestion {
+  display:block; width:100%; padding:9px 10px; border:0; border-radius:6px;
+  background:transparent; color:#e0e0ff; text-align:left; cursor:pointer; font:inherit;
+}
+.address-suggestion:hover, .address-suggestion:focus { background:#2a2a4e; outline:none; }
+.address-suggestion-name { display:block; font-size:12px; font-weight:700; }
+.address-suggestion-meta { display:block; margin-top:2px; color:#8a8ab0; font-size:11px; }
+.address-suggestion-type { color:#60a5fa; }
 .fbtn {
   min-height:32px; padding:6px 12px; border-radius:20px; border:1px solid #3a3a5e;
   font-size:12px; font-weight:600; cursor:pointer;
@@ -132,6 +147,7 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
   .address-search { order:2; width:100%; margin-left:0; }
   #address-input { width:100%; }
   #address-search-status { max-width:none; }
+  #address-suggestions { left:0; right:auto; width:100%; }
   #side-panel { width:100%; height:min(68%, 540px); top:auto; bottom:0; border-left:none; border-top:1px solid #2d2d4e; }
   #panel-img-wrap { height:145px; }
   #panel-body { padding:14px 16px; }
@@ -158,9 +174,10 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
     <button class="fbtn" id="btn-2"   onclick="setFilter('general')">일반 정비사업</button>
     <button class="fbtn" id="btn-s"   onclick="setFilter('overlap')">중복 사업장</button>
     <form class="address-search" onsubmit="searchAddress(event)">
-      <input id="address-input" type="search" autocomplete="street-address" placeholder="도로명주소·지번 검색" aria-label="도로명주소 또는 지번 검색">
+      <input id="address-input" type="search" autocomplete="street-address" placeholder="도로명주소·지번 검색" aria-label="도로명주소 또는 지번 검색" oninput="updateAddressSuggestions()" onfocus="updateAddressSuggestions()" onkeydown="handleAddressSearchKeydown(event)">
       <button class="fbtn on-1" id="address-search-btn" type="submit">주소 검색</button>
       <span id="address-search-status" role="status" aria-live="polite"></span>
+      <div id="address-suggestions" role="listbox" aria-label="사업지 주소 검색 결과"></div>
     </form>
   </div>
   <div id="map-wrap">
@@ -370,6 +387,8 @@ function areaToRadius(areaStr) {
 let zoneCircles = [];
 let generalMarkers = [];
 let activeCircle = null;
+let addressSearchItems = [];
+let visibleAddressSuggestions = [];
 
 function refreshMap() { setTimeout(() => map.autoResize(), 0); }
 function setOverlayVisible(overlay, visible) {
@@ -458,6 +477,11 @@ ZONES.forEach(zone => {
   circle._category = 'sintong';
   circle._visible = true;
   zoneCircles.push(circle);
+  addressSearchItems.push({
+    type: 'sintong', zone, circle,
+    name: zone.name, address: `${zone.gu} ${zone.addr}`,
+    label: '신속통합기획',
+  });
 });
 
 function normalize(value) { return (value || '').replace(/[\s()·,.-]/g, '').replace(/구역|정비사업|조합/g, ''); }
@@ -508,8 +532,15 @@ async function loadGeneralProjects() {
   try {
     const response = await fetch('./data/general-projects.json');
     const { projects = [] } = await response.json();
-    projects.filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng)).forEach(project => {
+    projects.forEach(project => {
       const overlap = isOverlap(project);
+      const item = {
+        type: 'general', project, feature: null,
+        name: project.name, address: `${project.gu} ${project.address}`,
+        label: overlap ? '중복 사업장' : '일반 정비사업',
+      };
+      addressSearchItems.push(item);
+      if (!Number.isFinite(project.lat) || !Number.isFinite(project.lng)) return;
       const color = overlap ? OVERLAP_COLOR : GENERAL_COLOR;
       const polygons = createGeneralPolygons(project, color, overlap);
       const overlays = polygons.length ? polygons : [new naver.maps.Marker({
@@ -525,7 +556,9 @@ async function loadGeneralProjects() {
       const feature = { overlays, _category: overlap ? 'overlap' : 'general', _visible: true };
       overlays.forEach(overlay => naver.maps.Event.addListener(overlay, 'click', () => openGeneralPanel(project, overlap)));
       generalMarkers.push(feature);
+      item.feature = feature;
     });
+    updateAddressSuggestions();
   } catch (error) { console.warn('일반 정비사업 데이터를 불러오지 못했습니다.', error); }
 }
 loadGeneralProjects();
@@ -557,11 +590,70 @@ function setAddressSearchStatus(message) {
 function isInsideSeoul(lat, lng) {
   return lat >= 37.413 && lat <= 37.715 && lng >= 126.734 && lng <= 127.270;
 }
+function hideAddressSuggestions() {
+  visibleAddressSuggestions = [];
+  const container = document.getElementById('address-suggestions');
+  container.replaceChildren();
+  container.classList.remove('open');
+}
+function addressSearchKey(value) {
+  return (value || '').toLowerCase().replace(/[\s()·,.-]/g, '');
+}
+function updateAddressSuggestions() {
+  const query = addressSearchKey(document.getElementById('address-input').value);
+  if (query.length < 2) return hideAddressSuggestions();
+  visibleAddressSuggestions = addressSearchItems
+    .map(item => ({ item, name: addressSearchKey(item.name), address: addressSearchKey(item.address) }))
+    .filter(entry => entry.name.includes(query) || entry.address.includes(query))
+    .sort((a, b) => {
+      const aScore = a.address.startsWith(query) ? 0 : a.name.startsWith(query) ? 1 : 2;
+      const bScore = b.address.startsWith(query) ? 0 : b.name.startsWith(query) ? 1 : 2;
+      return aScore - bScore || a.item.name.localeCompare(b.item.name, 'ko');
+    })
+    .slice(0, 8)
+    .map(entry => entry.item);
+  const container = document.getElementById('address-suggestions');
+  container.replaceChildren();
+  visibleAddressSuggestions.forEach((item, index) => {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'address-suggestion'; button.setAttribute('role', 'option');
+    const name = document.createElement('span'); name.className = 'address-suggestion-name'; name.textContent = item.name;
+    const meta = document.createElement('span'); meta.className = 'address-suggestion-meta';
+    const type = document.createElement('span'); type.className = 'address-suggestion-type'; type.textContent = item.label;
+    meta.append(type, document.createTextNode(` · ${item.address}`));
+    button.append(name, meta);
+    button.addEventListener('click', () => selectAddressSuggestion(index));
+    container.append(button);
+  });
+  container.classList.toggle('open', visibleAddressSuggestions.length > 0);
+}
+function selectAddressSuggestion(index) {
+  const item = visibleAddressSuggestions[index];
+  if (!item) return;
+  document.getElementById('address-input').value = item.address;
+  hideAddressSuggestions();
+  if (item.type === 'sintong') return openPanel(item.zone, item.circle);
+  const { project, feature } = item;
+  openGeneralPanel(project, item.label === '중복 사업장');
+  if (!feature) return setAddressSearchStatus('이 사업장은 서울시 공식 지도 경계가 아직 공개되지 않았습니다.');
+  map.setCenter(new naver.maps.LatLng(project.lat, project.lng));
+  map.setZoom(Math.max(map.getZoom(), 15));
+  setAddressSearchStatus(`${item.label} 상세 정보로 이동했습니다.`);
+}
+function handleAddressSearchKeydown(event) {
+  if (event.key === 'Escape') hideAddressSuggestions();
+  if (event.key === 'ArrowDown' && visibleAddressSuggestions.length) {
+    event.preventDefault();
+    document.querySelector('#address-suggestions button')?.focus();
+  }
+}
 function searchAddress(event) {
   event.preventDefault();
   const input = document.getElementById('address-input');
   const query = input.value.trim();
   if (!query) return setAddressSearchStatus('검색할 주소를 입력해 주세요.');
+  if (visibleAddressSuggestions.length) return selectAddressSuggestion(0);
+  hideAddressSuggestions();
   if (!naver.maps.Service || !naver.maps.Service.geocode) {
     return setAddressSearchStatus('주소 검색 권한을 확인 중입니다. 잠시 후 다시 시도해 주세요.');
   }
