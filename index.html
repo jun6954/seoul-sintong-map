@@ -360,7 +360,8 @@ let activeCircle = null;
 
 function refreshMap() { setTimeout(() => map.autoResize(), 0); }
 function setOverlayVisible(overlay, visible) {
-  overlay.setMap(visible ? map : null);
+  const overlays = overlay.overlays || [overlay];
+  overlays.forEach(item => item.setMap(visible ? map : null));
   overlay._visible = visible;
 }
 function setCircleStyle(circle, options) { circle.setOptions(options); }
@@ -459,12 +460,36 @@ function openGeneralPanel(project, overlap) {
   document.getElementById('panel-type').style.color = overlap ? OVERLAP_COLOR : GENERAL_COLOR;
   document.getElementById('panel-name').textContent = project.name;
   document.getElementById('panel-addr').textContent = `${project.gu} ${project.address}`;
-  const rows = [['사업구분', project.business_type], ['진행단계', project.stage || '-'], ['공개자료', project.public_data_count], ['자료충실도', project.completeness]];
+  const rows = [
+    ['사업구분', project.business_type], ['진행단계', project.stage || '-'],
+    ['사업경계', project.geometry ? '서울시 공식 경계' : '대표 위치'],
+    ['공개자료', project.public_data_count], ['자료충실도', project.completeness],
+  ];
   document.getElementById('panel-info').innerHTML = rows.map(([l,v]) => `<div class="info-row"><span class="info-label">${l}</span><span class="info-val">${v || '-'}</span></div>`).join('');
   document.getElementById('panel-link').href = project.source_url;
   document.getElementById('panel-link').textContent = '서울시 정비사업 정보몽땅에서 보기 ↗';
   panel.classList.add('open');
   refreshMap();
+}
+function toNaverPath(ring) {
+  return ring.map(([lng, lat]) => new naver.maps.LatLng(lat, lng));
+}
+function createGeneralPolygons(project, color, overlap) {
+  if (!project.geometry || !['Polygon', 'MultiPolygon'].includes(project.geometry.type)) return [];
+  const polygons = project.geometry.type === 'Polygon'
+    ? [project.geometry.coordinates]
+    : project.geometry.coordinates;
+  return polygons.map(coordinates => new naver.maps.Polygon({
+    map,
+    paths: coordinates.map(toNaverPath),
+    strokeColor: color,
+    strokeWeight: overlap ? 3 : 2,
+    strokeOpacity: .95,
+    fillColor: color,
+    fillOpacity: overlap ? .28 : .18,
+    clickable: true,
+    zIndex: overlap ? 20 : 5,
+  }));
 }
 async function loadGeneralProjects() {
   try {
@@ -473,21 +498,20 @@ async function loadGeneralProjects() {
     projects.filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng)).forEach(project => {
       const overlap = isOverlap(project);
       const color = overlap ? OVERLAP_COLOR : GENERAL_COLOR;
-      const size = overlap ? 16 : 12;
-      const marker = new naver.maps.Marker({
+      const polygons = createGeneralPolygons(project, color, overlap);
+      const overlays = polygons.length ? polygons : [new naver.maps.Marker({
         map,
         position: new naver.maps.LatLng(project.lat, project.lng),
         title: project.name,
         zIndex: overlap ? 20 : 5,
         icon: {
-          content: `<span style="display:block;width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 4px #0008"></span>`,
-          anchor: new naver.maps.Point(size / 2, size / 2),
+          content: `<span style="display:block;width:${overlap ? 16 : 12}px;height:${overlap ? 16 : 12}px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 1px 4px #0008"></span>`,
+          anchor: new naver.maps.Point(overlap ? 8 : 6, overlap ? 8 : 6),
         },
-      });
-      marker._category = overlap ? 'overlap' : 'general';
-      marker._visible = true;
-      naver.maps.Event.addListener(marker, 'click', () => openGeneralPanel(project, overlap));
-      generalMarkers.push(marker);
+      })];
+      const feature = { overlays, _category: overlap ? 'overlap' : 'general', _visible: true };
+      overlays.forEach(overlay => naver.maps.Event.addListener(overlay, 'click', () => openGeneralPanel(project, overlap)));
+      generalMarkers.push(feature);
     });
   } catch (error) { console.warn('일반 정비사업 데이터를 불러오지 못했습니다.', error); }
 }

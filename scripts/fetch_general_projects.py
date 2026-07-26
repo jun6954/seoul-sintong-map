@@ -72,10 +72,51 @@ def post(params: list[tuple[str, str]], endpoint: str = ENDPOINT) -> str:
         return response.read().decode("utf-8", errors="replace")
 
 
-def official_center(record_code: str | None) -> tuple[float | None, float | None]:
-    """Return a WGS84 center from Seoul Urban Space Portal's official geometry."""
-    if not record_code:
+def transform_geometry(shape: dict) -> dict | None:
+    """Convert an Urban Space Portal GeoJSON geometry from EPSG:5174 to WGS84."""
+    geometry_type = shape.get("type")
+    coordinates = shape.get("coordinates")
+    if geometry_type not in {"Polygon", "MultiPolygon"} or not coordinates:
+        return None
+
+    def convert(value):
+        if isinstance(value, list) and len(value) >= 2 and isinstance(value[0], (int, float)):
+            lng, lat = TO_WGS84.transform(value[0], value[1])
+            return [round(lng, 7), round(lat, 7)]
+        if isinstance(value, list):
+            return [convert(item) for item in value]
+        raise ValueError("Unexpected geometry coordinate")
+
+    return {"type": geometry_type, "coordinates": convert(coordinates)}
+
+
+def geometry_center(geometry: dict) -> tuple[float | None, float | None]:
+    """Return the centroid of the largest exterior ring in a WGS84 GeoJSON geometry."""
+    polygons = [geometry["coordinates"]] if geometry["type"] == "Polygon" else geometry["coordinates"]
+    candidates = []
+    for polygon in polygons:
+        if not polygon or len(polygon[0]) < 3:
+            continue
+        ring = polygon[0]
+        cross_sum = x_sum = y_sum = 0.0
+        for index, point in enumerate(ring):
+            next_point = ring[(index + 1) % len(ring)]
+            cross = point[0] * next_point[1] - next_point[0] * point[1]
+            cross_sum += cross
+            x_sum += (point[0] + next_point[0]) * cross
+            y_sum += (point[1] + next_point[1]) * cross
+        if cross_sum:
+            candidates.append((abs(cross_sum), y_sum / (3 * cross_sum), x_sum / (3 * cross_sum)))
+    if not candidates:
         return None, None
+    _, lat, lng = max(candidates)
+    return round(lat, 7), round(lng, 7)
+
+
+def official_geometry(record_code: str | None) -> dict | None:
+    """Return the official Seoul Urban Space Portal boundary as WGS84 GeoJSON."""
+    if not record_code:
+        return None
     try:
         with urlopen(Request(URBAN_POPUP.format(record_code), headers={"User-Agent": "seoul-sintong-map/1.0"}), timeout=30) as response:
             popup = response.read().decode("utf-8", errors="replace")
@@ -85,24 +126,11 @@ def official_center(record_code: str | None) -> tuple[float | None, float | None
         raw = post([("layerCode", layer.group(1)), ("wtnncSn", record_code)], URBAN_GEOMETRY)
         rows = json.loads(raw)
         if not rows or not rows[0].get("shape"):
-            return None, None
-        geometry = rows[0]["shape"]["coordinates"]
-        points: list[tuple[float, float]] = []
-        def collect(value):
-            if isinstance(value, list) and len(value) >= 2 and isinstance(value[0], (int, float)):
-                points.append((value[0], value[1]))
-            elif isinstance(value, list):
-                for item in value: collect(item)
-        collect(geometry)
-        if not points:
-            return None, None
-        x = sum(p[0] for p in points) / len(points)
-        y = sum(p[1] for p in points) / len(points)
-        lng, lat = TO_WGS84.transform(x, y)
-        return round(lat, 7), round(lng, 7)
+            return None
+        return transform_geometry(rows[0]["shape"])
     except Exception as exc:
         logging.warning("No official geometry for %s: %s", record_code, exc)
-        return None, None
+        return None
 
 
 def fetch_gu(code: str, with_geometry: bool) -> list[dict]:
@@ -115,7 +143,8 @@ def fetch_gu(code: str, with_geometry: bool) -> list[dict]:
         text = first if page == 1 else post(base + [("cpage", str(page)), ("pageSize", "100")])
         parser = TableParser(); parser.feed(text)
         for cells, record, cafe in parser.rows:
-            lat, lng = official_center(record) if with_geometry else (None, None)
+            geometry = official_geometry(record) if with_geometry else None
+            lat, lng = geometry_center(geometry) if geometry else (None, None)
             projects.append({
                 "id": record or f"{code}:{cells[2]}:{cells[3]}:{cells[4]}",
                 "gu": cells[1], "business_type": cells[2], "name": cells[3],
@@ -124,6 +153,8 @@ def fetch_gu(code: str, with_geometry: bool) -> list[dict]:
                 "map_record_code": record, "cafe_id": cafe,
                 "source_url": f"{SOURCE}?scupBsnsSttus.signguCode={code}",
                 "lat": lat, "lng": lng,
+                "geometry": geometry,
+                "geometry_source": "서울도시공간포털 공식 사업경계" if geometry else None,
             })
     return projects
 
