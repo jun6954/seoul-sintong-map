@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>서울 신통기획 선정구역 지도</title>
-<script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=4q4cmzubrc"></script>
+<script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=4q4cmzubrc&submodules=geocoder"></script>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif; background:#1a1a2e; }
@@ -19,6 +19,17 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
   display:flex; gap:6px; align-items:center; flex-wrap:wrap;
   border-bottom:1px solid #2d2d4e; flex-shrink:0;
 }
+.address-search { display:flex; align-items:center; gap:6px; margin-left:auto; }
+#address-input {
+  width:clamp(190px, 22vw, 290px); min-height:32px; padding:6px 11px;
+  border:1px solid #3a3a5e; border-radius:20px; outline:none;
+  background:#121225; color:#f0f0ff; font:12px inherit;
+}
+#address-input::placeholder { color:#6a6a9a; }
+#address-input:focus { border-color:#60a5fa; }
+#address-search-btn { min-height:32px; white-space:nowrap; }
+#address-search-status { display:none; font-size:11px; color:#fbbf24; max-width:240px; }
+#address-search-status.show { display:block; }
 .fbtn {
   min-height:32px; padding:6px 12px; border-radius:20px; border:1px solid #3a3a5e;
   font-size:12px; font-weight:600; cursor:pointer;
@@ -104,10 +115,6 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 .leg-row:last-child { margin-bottom:0; }
 .leg-dot { width:10px; height:10px; border-radius:50%; border:2px solid; flex-shrink:0; }
 
-.subway-marker {
-  width:7px; height:7px; border-radius:50%; border:1.5px solid #fff; opacity:.9;
-}
-
 /* 로딩 */
 #loading-msg {
   position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
@@ -122,7 +129,9 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
   #header p { max-width:36em; }
   #controls { gap:5px; padding-top:7px; padding-bottom:7px; }
   .fbtn { flex:1 0 auto; padding:6px 9px; font-size:11px; }
-  #btn-sub { margin-left:0!important; }
+  .address-search { order:2; width:100%; margin-left:0; }
+  #address-input { width:100%; }
+  #address-search-status { max-width:none; }
   #side-panel { width:100%; height:min(68%, 540px); top:auto; bottom:0; border-left:none; border-top:1px solid #2d2d4e; }
   #panel-img-wrap { height:145px; }
   #panel-body { padding:14px 16px; }
@@ -148,7 +157,11 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
     <button class="fbtn" id="btn-1"   onclick="setFilter('sintong')">신속통합기획</button>
     <button class="fbtn" id="btn-2"   onclick="setFilter('general')">일반 정비사업</button>
     <button class="fbtn" id="btn-s"   onclick="setFilter('overlap')">중복 사업장</button>
-    <button class="fbtn on-sub" id="btn-sub" onclick="toggleSubway()" style="margin-left:auto">지하철역 숨기기</button>
+    <form class="address-search" onsubmit="searchAddress(event)">
+      <input id="address-input" type="search" autocomplete="street-address" placeholder="도로명주소·지번 검색" aria-label="도로명주소 또는 지번 검색">
+      <button class="fbtn on-1" id="address-search-btn" type="submit">주소 검색</button>
+      <span id="address-search-status" role="status" aria-live="polite"></span>
+    </form>
   </div>
   <div id="map-wrap">
     <div id="map"></div>
@@ -535,45 +548,41 @@ function setFilter(f) {
   });
 }
 
-// ── 지하철역 ──────────────────────────────────────────────────────────────
-const LINE_COLORS = {"1":"#0052a4","2":"#00a84d","3":"#ef7c1c","4":"#00a4e3","5":"#996cac","6":"#cd7c2f","7":"#747f00","8":"#e6186c","9":"#bdb092"};
-const STATIONS = [
-  ["청량리","1",37.5806,127.0456],["동대문","1",37.5716,127.0094],["종각","1",37.5700,126.9830],["서울역","1",37.5547,126.9707],["용산","1",37.5310,126.9648],
-  ["강남","2",37.4980,127.0276],["홍대입구","2",37.5571,126.9255],["합정","2",37.5499,126.9147],["당산","2",37.5336,126.9019],["신림","2",37.4843,126.9298],
-  ["사당","2",37.4765,126.9814],["건대입구","2",37.5404,127.0700],["왕십리","2",37.5614,127.0372],["신촌","2",37.5550,126.9370],["을지로입구","2",37.5660,126.9828],["잠실","2",37.5133,127.1001],
-  ["불광","3",37.6119,126.9318],["홍제","3",37.5938,126.9372],["경복궁","3",37.5759,126.9747],["안국","3",37.5762,126.9858],["압구정","3",37.5272,127.0284],["교대","3",37.4934,127.0139],["고속터미널","3",37.5044,127.0049],["독립문","3",37.5750,126.9613],
-  ["미아사거리","4",37.6260,127.0298],["길음","4",37.6030,127.0253],["혜화","4",37.5823,127.0015],["명동","4",37.5631,126.9853],["서울역","4",37.5547,126.9707],["삼각지","4",37.5358,126.9726],["쌍문","4",37.6479,127.0305],["수유","4",37.6377,127.0252],["상계","4",37.6606,127.0680],["노원","4",37.6555,127.0610],
-  ["방화","5",37.5713,126.8013],["까치산","5",37.5413,126.8671],["영등포구청","5",37.5262,126.9010],["여의도","5",37.5217,126.9245],["공덕","5",37.5446,126.9515],["광화문","5",37.5714,126.9769],["마장","5",37.5655,127.0474],["군자","5",37.5604,127.0780],["마천","5",37.4953,127.1506],["천호","5",37.5388,127.1234],
-  ["응암","6",37.6022,126.9188],["망원","6",37.5558,126.9099],["이태원","6",37.5344,126.9939],["창신","6",37.5770,127.0153],["고려대","6",37.5883,127.0320],
-  ["도봉산","7",37.6858,127.0469],["노원","7",37.6555,127.0610],["중화","7",37.5994,127.0823],["면목","7",37.5867,127.0888],["건대입구","7",37.5404,127.0700],
-  ["논현","7",37.5116,127.0224],["이수","7",37.4873,126.9813],["신대방삼거리","7",37.4944,126.9118],["남구로","7",37.4828,126.8845],["가산디지털단지","7",37.4810,126.8819],["상도","7",37.5003,126.9384],
-  ["개화","9",37.5793,126.8011],["가양","9",37.5612,126.8655],["당산","9",37.5336,126.9019],["여의도","9",37.5217,126.9245],["동작","9",37.5096,126.9799],["고속터미널","9",37.5044,127.0049],["신논현","9",37.5046,127.0254],
-];
-
-const subwayMarkers = [];
-STATIONS.forEach(([name,line,lat,lng])=>{
-  const c = LINE_COLORS[line]||'#888';
-  const marker = new naver.maps.Marker({
-    map,
-    position: new naver.maps.LatLng(lat, lng),
-    title: `${name} ${line}호선`,
-    zIndex: 0,
-    icon: {
-      content: `<span class="subway-marker" style="background:${c}"></span>`,
-      anchor: new naver.maps.Point(3.5, 3.5),
-    },
+let addressSearchMarker = null;
+function setAddressSearchStatus(message) {
+  const status = document.getElementById('address-search-status');
+  status.textContent = message;
+  status.classList.toggle('show', Boolean(message));
+}
+function isInsideSeoul(lat, lng) {
+  return lat >= 37.413 && lat <= 37.715 && lng >= 126.734 && lng <= 127.270;
+}
+function searchAddress(event) {
+  event.preventDefault();
+  const input = document.getElementById('address-input');
+  const query = input.value.trim();
+  if (!query) return setAddressSearchStatus('검색할 주소를 입력해 주세요.');
+  if (!naver.maps.Service || !naver.maps.Service.geocode) {
+    return setAddressSearchStatus('주소 검색 권한을 확인 중입니다. 잠시 후 다시 시도해 주세요.');
+  }
+  setAddressSearchStatus('주소를 찾는 중입니다...');
+  naver.maps.Service.geocode({ query, count: 5 }, (status, response) => {
+    if (status !== naver.maps.Service.Status.OK || !response.v2 || !response.v2.addresses.length) {
+      return setAddressSearchStatus('주소를 찾지 못했습니다. 도로명 또는 지번을 다시 확인해 주세요.');
+    }
+    const result = response.v2.addresses[0];
+    const lat = Number(result.y);
+    const lng = Number(result.x);
+    if (!isInsideSeoul(lat, lng)) {
+      return setAddressSearchStatus('서울시 안의 주소만 검색할 수 있습니다.');
+    }
+    const position = new naver.maps.LatLng(lat, lng);
+    if (addressSearchMarker) addressSearchMarker.setMap(null);
+    addressSearchMarker = new naver.maps.Marker({ map, position, title: result.roadAddress || result.jibunAddress || query, zIndex: 100 });
+    map.setCenter(position);
+    map.setZoom(Math.max(map.getZoom(), 16));
+    setAddressSearchStatus(result.roadAddress || result.jibunAddress || '검색 결과로 이동했습니다.');
   });
-  marker._visible = true;
-  subwayMarkers.push(marker);
-});
-
-let subwayOn = true;
-function toggleSubway(){
-  const btn = document.getElementById('btn-sub');
-  subwayMarkers.forEach(marker => setOverlayVisible(marker, !subwayOn));
-  if(subwayOn){ btn.textContent='지하철역 표시'; btn.className='fbtn'; }
-  else        { btn.textContent='지하철역 숨기기'; btn.className='fbtn on-sub'; }
-  subwayOn = !subwayOn;
 }
 </script>
 </body>
