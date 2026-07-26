@@ -20,6 +20,14 @@ class UiContractTests(unittest.TestCase):
         self.assertIn("addressSearchItems.push", HTML)
         self.assertIn("서울시 공식 지도 경계가 아직 공개되지 않았습니다.", HTML)
 
+    def test_list_view_and_selected_area_highlight_are_available(self):
+        self.assertIn('id="list-view"', HTML)
+        self.assertIn("function toggleView()", HTML)
+        self.assertIn("function renderList()", HTML)
+        self.assertIn("function selectProjectItem(item)", HTML)
+        self.assertIn("function highlightZoneCircle(circle)", HTML)
+        self.assertIn("strokeColor:'#ef4444'", HTML)
+
     def test_obsolete_subway_controls_are_removed(self):
         self.assertNotIn("toggleSubway", HTML)
         self.assertNotIn("const STATIONS", HTML)

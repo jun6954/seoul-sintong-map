@@ -58,6 +58,23 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 
 #map-wrap { flex:1; position:relative; }
 #map { width:100%; height:100%; }
+#list-view {
+  display:none; position:absolute; inset:0; z-index:900; overflow-y:auto;
+  background:#121225; color:#e0e0ff; padding:clamp(14px, 3vw, 28px);
+}
+#list-view.open { display:block; }
+.list-summary { color:#8a8ab0; font-size:12px; margin-bottom:12px; }
+#project-list { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:9px; }
+.project-card {
+  padding:13px; border:1px solid #2d2d4e; border-radius:9px; background:#1a1a2e;
+  color:#e0e0ff; text-align:left; cursor:pointer; font:inherit;
+}
+.project-card:hover, .project-card:focus { border-color:#60a5fa; background:#202044; outline:none; }
+.project-card-title { display:block; font-size:13px; font-weight:700; line-height:1.35; }
+.project-card-meta { display:block; margin-top:5px; color:#8a8ab0; font-size:11px; line-height:1.4; }
+.project-card-type { color:#60a5fa; }
+.project-card-type.overlap { color:#fbbf24; }
+.project-card-type.general { color:#c4b5fd; }
 
 /* ── 사이드 패널 ── */
 #side-panel {
@@ -148,6 +165,8 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
   #address-input { width:100%; }
   #address-search-status { max-width:none; }
   #address-suggestions { left:0; right:auto; width:100%; }
+  #list-view { padding:14px; }
+  #project-list { grid-template-columns:1fr; }
   #side-panel { width:100%; height:min(68%, 540px); top:auto; bottom:0; border-left:none; border-top:1px solid #2d2d4e; }
   #panel-img-wrap { height:145px; }
   #panel-body { padding:14px 16px; }
@@ -173,6 +192,7 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
     <button class="fbtn" id="btn-1"   onclick="setFilter('sintong')">신속통합기획</button>
     <button class="fbtn" id="btn-2"   onclick="setFilter('general')">일반 정비사업</button>
     <button class="fbtn" id="btn-s"   onclick="setFilter('overlap')">중복 사업장</button>
+    <button class="fbtn" id="btn-view" onclick="toggleView()">리스트 보기</button>
     <form class="address-search" onsubmit="searchAddress(event)">
       <input id="address-input" type="search" autocomplete="street-address" placeholder="도로명주소·지번 검색" aria-label="도로명주소 또는 지번 검색" oninput="updateAddressSuggestions()" onfocus="updateAddressSuggestions()" onkeydown="handleAddressSearchKeydown(event)">
       <button class="fbtn on-1" id="address-search-btn" type="submit">주소 검색</button>
@@ -183,6 +203,10 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
   <div id="map-wrap">
     <div id="map"></div>
     <div id="loading-msg">지도 불러오는 중...</div>
+    <section id="list-view" aria-label="사업지 목록">
+      <p class="list-summary" id="list-summary"></p>
+      <div id="project-list"></div>
+    </section>
 
     <!-- 사이드 패널 -->
     <div id="side-panel">
@@ -389,6 +413,9 @@ let generalMarkers = [];
 let activeCircle = null;
 let addressSearchItems = [];
 let visibleAddressSuggestions = [];
+let currentFilter = 'all';
+let showingList = false;
+let activeSearchItem = null;
 
 function refreshMap() { setTimeout(() => map.autoResize(), 0); }
 function setOverlayVisible(overlay, visible) {
@@ -397,11 +424,16 @@ function setOverlayVisible(overlay, visible) {
   overlay._visible = visible;
 }
 function setCircleStyle(circle, options) { circle.setOptions(options); }
+function restoreZoneCircle(circle) {
+  const color = TYPE_COLOR[circle._zone.type];
+  setCircleStyle(circle, { strokeColor:color, strokeWeight:2.5, strokeOpacity:0.9, fillColor:color, fillOpacity:0.18, zIndex:1 });
+}
 
 function openPanel(zone, circle) {
   // 이전 활성 원 복원
   if (activeCircle && activeCircle !== circle) {
-    setCircleStyle(activeCircle, { strokeWeight:2.5, strokeOpacity:0.9, fillOpacity:0.18 });
+    if (activeSearchItem?.circle === activeCircle) highlightZoneCircle(activeCircle);
+    else restoreZoneCircle(activeCircle);
   }
   activeCircle = circle;
   setCircleStyle(circle, { strokeWeight:3.5, strokeOpacity:1, fillOpacity:0.32, zIndex:10 });
@@ -447,7 +479,8 @@ function closePanel() {
   document.getElementById('side-panel').classList.remove('open');
   refreshMap();
   if (activeCircle) {
-    setCircleStyle(activeCircle, { strokeWeight:2.5, strokeOpacity:0.9, fillOpacity:0.18, zIndex:1 });
+    if (activeSearchItem?.circle === activeCircle) highlightZoneCircle(activeCircle);
+    else restoreZoneCircle(activeCircle);
     activeCircle = null;
   }
 }
@@ -470,10 +503,11 @@ ZONES.forEach(zone => {
   naver.maps.Event.addListener(circle, 'click', () => openPanel(zone, circle));
   naver.maps.Event.addListener(circle, 'mouseover', () => setCircleStyle(circle, { strokeWeight:3.5, fillOpacity:0.3, zIndex:10 }));
   naver.maps.Event.addListener(circle, 'mouseout', () => {
-    if (circle !== activeCircle) setCircleStyle(circle, { strokeWeight:2.5, fillOpacity:0.18, zIndex:1 });
+    if (circle !== activeCircle && activeSearchItem?.circle !== circle) restoreZoneCircle(circle);
   });
 
   circle._zoneType = zone.type;
+  circle._zone = zone;
   circle._category = 'sintong';
   circle._visible = true;
   zoneCircles.push(circle);
@@ -553,18 +587,99 @@ async function loadGeneralProjects() {
           anchor: new naver.maps.Point(overlap ? 8 : 6, overlap ? 8 : 6),
         },
       })];
-      const feature = { overlays, _category: overlap ? 'overlap' : 'general', _visible: true };
+      const feature = { overlays, _category: overlap ? 'overlap' : 'general', _visible: true, _color:color, _overlap:overlap };
       overlays.forEach(overlay => naver.maps.Event.addListener(overlay, 'click', () => openGeneralPanel(project, overlap)));
       generalMarkers.push(feature);
       item.feature = feature;
     });
     updateAddressSuggestions();
+    if (showingList) renderList();
   } catch (error) { console.warn('일반 정비사업 데이터를 불러오지 못했습니다.', error); }
 }
 loadGeneralProjects();
 
+function highlightZoneCircle(circle) {
+  setCircleStyle(circle, { strokeColor:'#ef4444', strokeWeight:4, strokeOpacity:1, fillColor:'#ef4444', fillOpacity:.32, zIndex:100 });
+}
+function restoreGeneralFeature(feature) {
+  feature.overlays.forEach(overlay => {
+    if (typeof overlay.setOptions === 'function') {
+      overlay.setOptions({ strokeColor:feature._color, strokeWeight:feature._overlap ? 3 : 2, strokeOpacity:.95, fillColor:feature._color, fillOpacity:feature._overlap ? .28 : .18, zIndex:feature._overlap ? 20 : 5 });
+    } else if (typeof overlay.setZIndex === 'function') {
+      overlay.setZIndex(feature._overlap ? 20 : 5);
+    }
+  });
+}
+function highlightGeneralFeature(feature) {
+  feature.overlays.forEach(overlay => {
+    if (typeof overlay.setOptions === 'function') {
+      overlay.setOptions({ strokeColor:'#ef4444', strokeWeight:4, strokeOpacity:1, fillColor:'#ef4444', fillOpacity:.34, zIndex:100 });
+    } else if (typeof overlay.setZIndex === 'function') {
+      overlay.setZIndex(100);
+    }
+  });
+}
+function clearSearchHighlight() {
+  if (!activeSearchItem) return;
+  if (activeSearchItem.type === 'sintong') restoreZoneCircle(activeSearchItem.circle);
+  else if (activeSearchItem.feature) restoreGeneralFeature(activeSearchItem.feature);
+  activeSearchItem = null;
+}
+function selectProjectItem(item) {
+  clearSearchHighlight();
+  activeSearchItem = item;
+  if (showingList) toggleView();
+  if (item.type === 'sintong') {
+    openPanel(item.zone, item.circle);
+    highlightZoneCircle(item.circle);
+    return;
+  }
+  const { project, feature } = item;
+  openGeneralPanel(project, item.label === '중복 사업장');
+  if (!feature) return setAddressSearchStatus('이 사업장은 서울시 공식 지도 경계가 아직 공개되지 않았습니다.');
+  map.setCenter(new naver.maps.LatLng(project.lat, project.lng));
+  map.setZoom(Math.max(map.getZoom(), 15));
+  highlightGeneralFeature(feature);
+  setAddressSearchStatus(`${item.label} 영역을 붉은색으로 표시했습니다.`);
+}
+function listItemsForCurrentFilter() {
+  return addressSearchItems.filter(item =>
+    currentFilter === 'all' ||
+    (currentFilter === 'sintong' && item.type === 'sintong') ||
+    (currentFilter === 'general' && item.label === '일반 정비사업') ||
+    (currentFilter === 'overlap' && item.label === '중복 사업장')
+  );
+}
+function renderList() {
+  const items = listItemsForCurrentFilter();
+  document.getElementById('list-summary').textContent = `현재 필터의 사업지 ${items.length.toLocaleString('ko-KR')}개 · 항목을 선택하면 지도에서 붉은색으로 강조합니다.`;
+  const list = document.getElementById('project-list');
+  list.replaceChildren();
+  items.forEach(item => {
+    const card = document.createElement('button');
+    card.type = 'button'; card.className = 'project-card';
+    const title = document.createElement('span'); title.className = 'project-card-title'; title.textContent = item.name;
+    const meta = document.createElement('span'); meta.className = 'project-card-meta';
+    const type = document.createElement('span'); type.className = `project-card-type ${item.label === '중복 사업장' ? 'overlap' : item.type === 'general' ? 'general' : ''}`; type.textContent = item.label;
+    meta.append(type, document.createTextNode(` · ${item.address}`));
+    card.append(title, meta);
+    card.addEventListener('click', () => selectProjectItem(item));
+    list.append(card);
+  });
+}
+function toggleView() {
+  showingList = !showingList;
+  document.getElementById('list-view').classList.toggle('open', showingList);
+  document.getElementById('btn-view').textContent = showingList ? '지도 보기' : '리스트 보기';
+  if (showingList) {
+    closePanel();
+    renderList();
+  } else refreshMap();
+}
+
 // ── 필터 ─────────────────────────────────────────────────────────────────
 function setFilter(f) {
+  currentFilter = f;
   closePanel();
   ['all','sintong','general','overlap'].forEach((v,i)=>{
     const ids=['btn-all','btn-1','btn-2','btn-s'];
@@ -579,6 +694,7 @@ function setFilter(f) {
     const show = f==='all' || marker._category===f;
     setOverlayVisible(marker, show);
   });
+  if (showingList) renderList();
 }
 
 let addressSearchMarker = null;
@@ -632,13 +748,7 @@ function selectAddressSuggestion(index) {
   if (!item) return;
   document.getElementById('address-input').value = item.address;
   hideAddressSuggestions();
-  if (item.type === 'sintong') return openPanel(item.zone, item.circle);
-  const { project, feature } = item;
-  openGeneralPanel(project, item.label === '중복 사업장');
-  if (!feature) return setAddressSearchStatus('이 사업장은 서울시 공식 지도 경계가 아직 공개되지 않았습니다.');
-  map.setCenter(new naver.maps.LatLng(project.lat, project.lng));
-  map.setZoom(Math.max(map.getZoom(), 15));
-  setAddressSearchStatus(`${item.label} 상세 정보로 이동했습니다.`);
+  selectProjectItem(item);
 }
 function handleAddressSearchKeydown(event) {
   if (event.key === 'Escape') hideAddressSuggestions();
