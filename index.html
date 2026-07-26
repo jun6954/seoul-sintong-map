@@ -75,6 +75,12 @@ html, body { height:100%; font-family:'Apple SD Gothic Neo','Malgun Gothic',sans
 .project-card-type { color:#60a5fa; }
 .project-card-type.overlap { color:#fbbf24; }
 .project-card-type.general { color:#c4b5fd; }
+.overlap-menu { width:280px; padding:12px; border:1px solid #3a3a5e; border-radius:10px; background:#15152a; color:#e0e0ff; box-shadow:0 10px 28px rgba(0,0,0,.4); }
+.overlap-menu-title { margin-bottom:8px; color:#a0a0c0; font-size:11px; font-weight:700; }
+.overlap-choice { display:block; width:100%; padding:8px; border:0; border-radius:6px; background:transparent; color:#f0f0ff; text-align:left; cursor:pointer; font:inherit; }
+.overlap-choice:hover { background:#2a2a4e; }
+.overlap-choice-name { display:block; font-size:12px; font-weight:700; }
+.overlap-choice-meta { display:block; margin-top:2px; color:#8a8ab0; font-size:10px; }
 
 /* ── 사이드 패널 ── */
 #side-panel {
@@ -416,6 +422,8 @@ let visibleAddressSuggestions = [];
 let currentFilter = 'all';
 let showingList = false;
 let activeSearchItem = null;
+let overlapCandidates = [];
+let overlapInfoWindow = null;
 
 function refreshMap() { setTimeout(() => map.autoResize(), 0); }
 function setOverlayVisible(overlay, visible) {
@@ -426,6 +434,79 @@ function setOverlayVisible(overlay, visible) {
 function setCircleStyle(circle, options) { circle.setOptions(options); }
 function moveMapTo(position, minimumZoom) {
   map.morph(position, Math.max(map.getZoom(), minimumZoom), { duration:700, easing:'easeOutCubic' });
+}
+function haversineMeters(lat1, lng1, lat2, lng2) {
+  const radius = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+  return 2 * radius * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+function pointInRing(lng, lat, ring) {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    const crosses = (yi > lat) !== (yj > lat) && lng < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
+    if (crosses) inside = !inside;
+  }
+  return inside;
+}
+function polygonContainsPoint(coordinates, lat, lng) {
+  return pointInRing(lng, lat, coordinates[0]) && !coordinates.slice(1).some(ring => pointInRing(lng, lat, ring));
+}
+function geometryContainsPoint(geometry, lat, lng) {
+  if (!geometry) return false;
+  if (geometry.type === 'Polygon') return polygonContainsPoint(geometry.coordinates, lat, lng);
+  if (geometry.type === 'MultiPolygon') return geometry.coordinates.some(coordinates => polygonContainsPoint(coordinates, lat, lng));
+  return false;
+}
+function isVisibleProjectItem(item) {
+  return item.type === 'sintong' ? item.circle._visible : Boolean(item.feature?._visible);
+}
+function itemContainsPoint(item, lat, lng) {
+  if (item.type === 'sintong') {
+    return haversineMeters(lat, lng, item.zone.lat, item.zone.lng) <= areaToRadius(item.zone.area);
+  }
+  return geometryContainsPoint(item.project.geometry, lat, lng);
+}
+function closeOverlapPicker() {
+  overlapCandidates = [];
+  if (overlapInfoWindow) overlapInfoWindow.close();
+}
+function selectOverlapCandidate(index) {
+  const item = overlapCandidates[index];
+  closeOverlapPicker();
+  if (item) selectProjectItem(item);
+}
+function openOverlapPicker(coord, candidates) {
+  overlapCandidates = candidates;
+  const choices = candidates.map((item, index) =>
+    `<button type="button" class="overlap-choice" onclick="selectOverlapCandidate(${index})"><span class="overlap-choice-name">${escapeHtml(item.name)}</span><span class="overlap-choice-meta">${escapeHtml(item.label)} · ${escapeHtml(item.address)}</span></button>`
+  ).join('');
+  if (!overlapInfoWindow) {
+    overlapInfoWindow = new naver.maps.InfoWindow({
+      borderWidth: 0,
+      backgroundColor: 'transparent',
+      disableAnchor: false,
+      anchorSize: new naver.maps.Size(10, 10),
+      pixelOffset: new naver.maps.Point(0, -5),
+    });
+  }
+  overlapInfoWindow.setContent(`<div class="overlap-menu"><div class="overlap-menu-title">이 위치에 겹친 사업지 ${candidates.length}개</div>${choices}</div>`);
+  overlapInfoWindow.open(map, coord);
+}
+function handleMapFeatureClick(event, item) {
+  const coord = event?.coord;
+  if (!coord) return selectProjectItem(item);
+  const candidates = addressSearchItems.filter(candidate =>
+    isVisibleProjectItem(candidate) && itemContainsPoint(candidate, coord.lat(), coord.lng())
+  );
+  if (candidates.length < 2) return selectProjectItem(candidates[0] || item);
+  openOverlapPicker(coord, candidates);
+}
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, char => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[char]);
 }
 function restoreZoneCircle(circle) {
   const color = TYPE_COLOR[circle._zone.type];
@@ -513,7 +594,7 @@ ZONES.forEach(zone => {
     label: '신속통합기획',
   };
   addressSearchItems.push(item);
-  naver.maps.Event.addListener(circle, 'click', () => selectProjectItem(item));
+  naver.maps.Event.addListener(circle, 'click', event => handleMapFeatureClick(event, item));
   naver.maps.Event.addListener(circle, 'mouseover', () => setCircleStyle(circle, { strokeWeight:3.5, fillOpacity:0.3, zIndex:10 }));
   naver.maps.Event.addListener(circle, 'mouseout', () => {
     if (circle !== activeCircle && activeSearchItem?.circle !== circle) restoreZoneCircle(circle);
@@ -591,7 +672,7 @@ async function loadGeneralProjects() {
       })];
       const feature = { overlays, _category: overlap ? 'overlap' : 'general', _visible: true, _color:color, _overlap:overlap };
       item.feature = feature;
-      overlays.forEach(overlay => naver.maps.Event.addListener(overlay, 'click', () => selectProjectItem(item)));
+      overlays.forEach(overlay => naver.maps.Event.addListener(overlay, 'click', event => handleMapFeatureClick(event, item)));
       generalMarkers.push(feature);
     });
     updateAddressSuggestions();
@@ -628,6 +709,7 @@ function clearSearchHighlight() {
   activeSearchItem = null;
 }
 function selectProjectItem(item) {
+  closeOverlapPicker();
   clearSearchHighlight();
   activeSearchItem = item;
   if (showingList) toggleView();
@@ -641,7 +723,6 @@ function selectProjectItem(item) {
   if (!feature) return setAddressSearchStatus('이 사업장은 서울시 공식 지도 경계가 아직 공개되지 않았습니다.');
   moveMapTo(new naver.maps.LatLng(project.lat, project.lng), 15);
   highlightGeneralFeature(feature);
-  setAddressSearchStatus(`${item.label} 영역을 붉은색으로 표시했습니다.`);
 }
 function listItemsForCurrentFilter() {
   return addressSearchItems.filter(item =>
@@ -681,6 +762,7 @@ function toggleView() {
 // ── 필터 ─────────────────────────────────────────────────────────────────
 function setFilter(f) {
   currentFilter = f;
+  closeOverlapPicker();
   closePanel();
   ['all','sintong','general','overlap'].forEach((v,i)=>{
     const ids=['btn-all','btn-1','btn-2','btn-s'];
