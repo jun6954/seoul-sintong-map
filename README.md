@@ -33,6 +33,15 @@ GitHub Actions는 매일 05:15(KST)에 일반 정비사업 목록을 수집하�
 
 즐겨찾기 테이블은 RLS와 권한 회수로 브라우저의 데이터 API에서 완전히 차단됩니다. Edge Function 내부의 비밀 키가 전용 링크 키를 검증한 뒤에만 읽고 쓰므로, secret/service_role 키는 브라우저 코드에 포함되지 않습니다. 전용 링크를 아는 사람은 즐겨찾기를 바꿀 수 있으므로 비밀번호처럼 보관해야 합니다.
 
+## 네이버 외부 주소 검색 설정
+
+외부 도로명·지번 주소 검색은 [`supabase/functions/naver-geocode/index.ts`](supabase/functions/naver-geocode/index.ts) Edge Function을 통해 호출합니다. Supabase **Edge Function Secrets**에 아래 두 값을 저장한 뒤 `naver-geocode` 함수를 배포합니다.
+
+- `NAVER_MAPS_CLIENT_ID`
+- `NAVER_MAPS_CLIENT_SECRET`
+
+브라우저에는 Client Secret을 포함하지 않습니다. 함수는 신규 Maps VPC Geocoding URL `https://maps.apigw.ntruss.com/map-geocode/v2/geocode`만 호출합니다.
+
 ## 배포
 
 GitHub Pages 배포 시 `Settings → Pages → Deploy from a branch → main / (root)`를 선택하면 공개 URL로 접근할 수 있습니다.

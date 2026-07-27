@@ -919,22 +919,32 @@ function handleAddressSearchKeydown(event) {
     document.querySelector('#address-suggestions button')?.focus();
   }
 }
-function searchAddress(event) {
+async function requestNaverGeocode(query) {
+  const response = await fetch(`${SUPABASE_URL}/functions/v1/naver-geocode`, {
+    method: 'POST',
+    headers: {
+      apikey: SUPABASE_PUBLISHABLE_KEY,
+      Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ query }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || '주소 검색 요청에 실패했습니다.');
+  return data.addresses || [];
+}
+async function searchAddress(event) {
   event.preventDefault();
   const input = document.getElementById('address-input');
   const query = input.value.trim();
   if (!query) return setAddressSearchStatus('검색할 주소를 입력해 주세요.');
   if (visibleAddressSuggestions.length) return selectAddressSuggestion(0);
   hideAddressSuggestions();
-  if (!naver.maps.Service || !naver.maps.Service.geocode) {
-    return setAddressSearchStatus('주소 검색 권한을 확인 중입니다. 잠시 후 다시 시도해 주세요.');
-  }
   setAddressSearchStatus('주소를 찾는 중입니다...');
-  naver.maps.Service.geocode({ query, count: 5 }, (status, response) => {
-    if (status !== naver.maps.Service.Status.OK || !response.v2 || !response.v2.addresses.length) {
-      return setAddressSearchStatus('주소를 찾지 못했습니다. 도로명 또는 지번을 다시 확인해 주세요.');
-    }
-    const result = response.v2.addresses[0];
+  try {
+    const addresses = await requestNaverGeocode(query);
+    if (!addresses.length) return setAddressSearchStatus('주소를 찾지 못했습니다. 도로명 또는 지번을 다시 확인해 주세요.');
+    const result = addresses[0];
     const lat = Number(result.y);
     const lng = Number(result.x);
     if (!isInsideSeoul(lat, lng)) {
@@ -945,7 +955,10 @@ function searchAddress(event) {
     addressSearchMarker = new naver.maps.Marker({ map, position, title: result.roadAddress || result.jibunAddress || query, zIndex: 100 });
     moveMapTo(position, 16);
     setAddressSearchStatus(result.roadAddress || result.jibunAddress || '검색 결과로 이동했습니다.');
-  });
+  } catch (error) {
+    console.warn('네이버 주소 검색에 실패했습니다.', error);
+    setAddressSearchStatus('주소 검색을 일시적으로 사용할 수 없습니다. 잠시 후 다시 시도해 주세요.');
+  }
 }
 </script>
 </body>

@@ -1,2 +1,5 @@
 [functions.shared-favorites]
 verify_jwt = false
+
+[functions.naver-geocode]
+verify_jwt = false
