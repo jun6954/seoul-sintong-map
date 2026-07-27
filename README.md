@@ -22,7 +22,7 @@
 
 ## 자동 동기화와 알림
 
-GitHub Actions는 매일 05:15(KST)에 일반 정비사업 목록을 수집하고 변경 시 Pages를 갱신합니다. Telegram 알림을 사용하려면 저장소 Secrets에 `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`를 설정해야 합니다.
+GitHub Actions는 매일 05:15(KST)에 일반 정비사업 목록을 수집하고 변경 시 Pages를 갱신합니다. 텔레그램 알림은 기본적으로 꺼져 있으며, 재개하려면 저장소 Actions Variable `TELEGRAM_NOTIFICATIONS_ENABLED`를 `true`로 설정하고 `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` Secrets를 유지하면 됩니다.
 
 ## 즐겨찾기 Supabase 설정
 
