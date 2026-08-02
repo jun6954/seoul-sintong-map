@@ -1,6 +1,6 @@
 {
   "source": "https://cleanup.seoul.go.kr/cleanup/bsnssttus/lscrMainIndx.do",
-  "updated_at": "2026-08-01T21:21:35.996184+00:00",
+  "updated_at": "2026-08-02T21:18:56.237801+00:00",
   "projects": [
     {
       "id": "11000AGZ202212210002",
@@ -9519,7 +9519,7 @@
       "name": "청파2구역 주택정비형 재개발사업 정비사업조합",
       "address": "청파동1가 89-18",
       "stage": "조합설립인가",
-      "public_data_count": "38건",
+      "public_data_count": "39건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -45885,8 +45885,8 @@
       "name": "영천구역주택재개발정비사업조합",
       "address": "영천동 69-20",
       "stage": "착공",
-      "public_data_count": "2734건",
-      "timeliness": "75.0%",
+      "public_data_count": "2735건",
+      "timeliness": "80.0%",
       "completeness": "100.0%",
       "map_record_code": "11410AGZ202112160001",
       "cafe_id": "youngchun",
@@ -56301,76 +56301,10 @@
       "map_record_code": "11470AGZ202501220002",
       "cafe_id": "mokdong13",
       "source_url": "https://cleanup.seoul.go.kr/cleanup/bsnssttus/lscrMainIndx.do?scupBsnsSttus.signguCode=11470",
-      "lat": 37.514521,
-      "lng": 126.8660054,
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              126.8680419,
-              37.5168036
-            ],
-            [
-              126.8694158,
-              37.5140976
-            ],
-            [
-              126.869387,
-              37.5140098
-            ],
-            [
-              126.8692893,
-              37.5139759
-            ],
-            [
-              126.8677706,
-              37.5134496
-            ],
-            [
-              126.8674188,
-              37.5133276
-            ],
-            [
-              126.8641345,
-              37.5121893
-            ],
-            [
-              126.8640251,
-              37.5122301
-            ],
-            [
-              126.8625565,
-              37.5149152
-            ],
-            [
-              126.8626118,
-              37.5150178
-            ],
-            [
-              126.8659326,
-              37.5161702
-            ],
-            [
-              126.8662087,
-              37.516266
-            ],
-            [
-              126.8678076,
-              37.5168209
-            ],
-            [
-              126.8678992,
-              37.5168526
-            ],
-            [
-              126.8680419,
-              37.5168036
-            ]
-          ]
-        ]
-      },
-      "geometry_source": "서울도시공간포털 공식 사업경계"
+      "lat": null,
+      "lng": null,
+      "geometry": null,
+      "geometry_source": null
     },
     {
       "id": "11470:재건축:목동14단지아파트 재건축정비사업:신정동 329",
@@ -71831,7 +71765,7 @@
       "name": "여의도화랑아파트 소규모재건축사업",
       "address": "여의도동 40-4",
       "stage": "조합설립인가",
-      "public_data_count": "76건",
+      "public_data_count": "77건",
       "timeliness": "0.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -86661,7 +86595,7 @@
       "name": "봉천제4-1-2구역 주택재개발정비사업 조합",
       "address": "봉천동 산 101",
       "stage": "분양",
-      "public_data_count": "1387건",
+      "public_data_count": "1388건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201706128619",
