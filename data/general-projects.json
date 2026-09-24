@@ -1,6 +1,6 @@
 {
   "source": "https://cleanup.seoul.go.kr/cleanup/bsnssttus/lscrMainIndx.do",
-  "updated_at": "2026-09-23T23:10:01.769958+00:00",
+  "updated_at": "2026-09-24T23:25:00.821033+00:00",
   "projects": [
     {
       "id": "11000AGZ202212210002",
@@ -25639,7 +25639,7 @@
       "name": "중화역 2의5구역 가로주택정비사업",
       "address": "중화동 317-45",
       "stage": "조합설립인가",
-      "public_data_count": "164건",
+      "public_data_count": "169건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -36581,7 +36581,7 @@
       "name": "상계2재정비촉진구역 주택재개발정비사업 조합",
       "address": "상계동 자력2구역 17블럭 1롯트",
       "stage": "사업시행인가",
-      "public_data_count": "1662건",
+      "public_data_count": "1663건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ200309054208",
@@ -62339,7 +62339,7 @@
       "name": "온수동 18-1번지 일원 소규모재개발 정비사업조합",
       "address": "온수동 18-1",
       "stage": "조합설립인가",
-      "public_data_count": "17건",
+      "public_data_count": "18건",
       "timeliness": "-",
       "completeness": "-",
       "map_record_code": null,
@@ -100961,10 +100961,52 @@
       "map_record_code": "11710AGZ202508070001",
       "cafe_id": "woochang",
       "source_url": "https://cleanup.seoul.go.kr/cleanup/bsnssttus/lscrMainIndx.do?scupBsnsSttus.signguCode=11710",
-      "lat": null,
-      "lng": null,
-      "geometry": null,
-      "geometry_source": null
+      "lat": 37.4992333,
+      "lng": 127.1369193,
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              127.1378082,
+              37.4985948
+            ],
+            [
+              127.1376256,
+              37.498445
+            ],
+            [
+              127.1375694,
+              37.4984404
+            ],
+            [
+              127.1374231,
+              37.4985189
+            ],
+            [
+              127.1356455,
+              37.4994737
+            ],
+            [
+              127.1362883,
+              37.5000026
+            ],
+            [
+              127.1364575,
+              37.5000119
+            ],
+            [
+              127.138204,
+              37.4989196
+            ],
+            [
+              127.1378082,
+              37.4985948
+            ]
+          ]
+        ]
+      },
+      "geometry_source": "서울도시공간포털 공식 사업경계"
     },
     {
       "id": "11710AGZ202012160001",
