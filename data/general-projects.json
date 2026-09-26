@@ -1,6 +1,6 @@
 {
   "source": "https://cleanup.seoul.go.kr/cleanup/bsnssttus/lscrMainIndx.do",
-  "updated_at": "2026-09-25T23:31:31.379198+00:00",
+  "updated_at": "2026-09-26T23:01:23.924646+00:00",
   "projects": [
     {
       "id": "11000AGZ202212210002",
@@ -34763,8 +34763,8 @@
       "name": "쌍문2구역(쌍문동 81번지 일대) 주택정비형 재개발사업",
       "address": "쌍문동 81",
       "stage": "추진위원회승인",
-      "public_data_count": "9건",
-      "timeliness": "50.0%",
+      "public_data_count": "10건",
+      "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
       "cafe_id": "sangm81",
@@ -93369,7 +93369,7 @@
       "name": "신반포2차아파트 재건축정비사업조합",
       "address": "잠원동 73",
       "stage": "조합설립인가",
-      "public_data_count": "1937건",
+      "public_data_count": "1938건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
