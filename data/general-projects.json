@@ -1,6 +1,6 @@
 {
   "source": "https://cleanup.seoul.go.kr/cleanup/bsnssttus/lscrMainIndx.do",
-  "updated_at": "2026-10-15T23:14:35.389687+00:00",
+  "updated_at": "2026-10-16T23:01:18.049014+00:00",
   "projects": [
     {
       "id": "11000AGZ202212210002",
@@ -5981,7 +5981,7 @@
       "name": "신당제9구역 주택재개발정비사업조합",
       "address": "신당동 432-1008",
       "stage": "조합설립인가",
-      "public_data_count": "1471건",
+      "public_data_count": "1472건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11140AGZ202109170001",
@@ -7073,7 +7073,7 @@
       "name": "(가칭)황학동1010일대 지역주택조합",
       "address": "황학동 1010",
       "stage": "조합원 모집신고",
-      "public_data_count": "185건",
+      "public_data_count": "186건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -7127,7 +7127,7 @@
       "name": "남영동 업무지구 제2구역 도시정비형 재개발사업 조합",
       "address": "갈월동 92",
       "stage": "조합설립인가",
-      "public_data_count": "500건",
+      "public_data_count": "502건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -7181,7 +7181,7 @@
       "name": "한남4재정비촉진구역 주택재개발정비사업 조합",
       "address": "보광동 360",
       "stage": "사업시행인가",
-      "public_data_count": "3171건",
+      "public_data_count": "3172건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201704118606",
@@ -8937,7 +8937,7 @@
       "name": "이촌동제1구역 주택재건축정비사업 조합설립추진위원회",
       "address": "이촌동 203-75",
       "stage": "추진위원회승인",
-      "public_data_count": "1369건",
+      "public_data_count": "1370건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -9519,7 +9519,7 @@
       "name": "청파2구역 주택정비형 재개발사업 정비사업조합",
       "address": "청파동1가 89-18",
       "stage": "조합설립인가",
-      "public_data_count": "95건",
+      "public_data_count": "96건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -9591,7 +9591,7 @@
       "name": "신용산역북측 제1구역 도시환경정비사업조합",
       "address": "한강로2가 2-116",
       "stage": "사업시행인가",
-      "public_data_count": "638건",
+      "public_data_count": "647건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201808100122",
@@ -9681,7 +9681,7 @@
       "name": "정비창전면 제1구역 재개발 정비사업조합",
       "address": "한강로3가 40-641",
       "stage": "조합설립인가",
-      "public_data_count": "2186건",
+      "public_data_count": "2189건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -10459,7 +10459,7 @@
       "name": "한남 제3재정비촉진구역 주택재개발정비사업 조합",
       "address": "한남동 686",
       "stage": "철거",
-      "public_data_count": "6185건",
+      "public_data_count": "6188건",
       "timeliness": "95.45%",
       "completeness": "99.96%",
       "map_record_code": "11000AGZ201708108631",
@@ -12055,7 +12055,7 @@
       "name": "성수제1구역주택재건축정비사업조합",
       "address": "성수동1가 656-1267",
       "stage": "조합설립인가",
-      "public_data_count": "989건",
+      "public_data_count": "994건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -12757,7 +12757,7 @@
       "name": "행당제7구역 주택재개발정비사업조합",
       "address": "행당동 128",
       "stage": "분양",
-      "public_data_count": "7078건",
+      "public_data_count": "7079건",
       "timeliness": "50.0%",
       "completeness": "99.96%",
       "map_record_code": null,
@@ -13081,7 +13081,7 @@
       "name": "광장극동아파트 재건축사업 (신속통합기획)",
       "address": "광장동 218-1",
       "stage": "정비구역지정",
-      "public_data_count": "55건",
+      "public_data_count": "56건",
       "timeliness": "-",
       "completeness": "-",
       "map_record_code": null,
@@ -13351,7 +13351,7 @@
       "name": "자양동 648번지 일대 가로주택정비사업",
       "address": "자양동 648",
       "stage": "조합설립인가",
-      "public_data_count": "17건",
+      "public_data_count": "18건",
       "timeliness": "66.67%",
       "completeness": "100.0%",
       "map_record_code": "WTNNC_SN",
@@ -13477,7 +13477,7 @@
       "name": "신향빌라 재건축사업",
       "address": "중곡동 18-24",
       "stage": "조합설립인가",
-      "public_data_count": "64건",
+      "public_data_count": "66건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11215AGZ202205030001",
@@ -13779,7 +13779,7 @@
       "name": "답십리자동차부품상가 도시정비형 재개발정비사업조합",
       "address": "답십리동 952",
       "stage": "사업시행인가",
-      "public_data_count": "825건",
+      "public_data_count": "829건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202009150002",
@@ -18099,7 +18099,7 @@
       "name": "장안동 현대아파트 재건축정비사업조합",
       "address": "장안동 95-1",
       "stage": "관리처분인가",
-      "public_data_count": "908건",
+      "public_data_count": "909건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201711030378",
@@ -18441,7 +18441,7 @@
       "name": "청량리제6구역주택재개발정비사업조합",
       "address": "청량리동 205",
       "stage": "사업시행인가",
-      "public_data_count": "1787건",
+      "public_data_count": "1788건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ200811267597",
@@ -18459,7 +18459,7 @@
       "name": "청량리미주아파트 주택재건축정비사업",
       "address": "청량리동 235-1",
       "stage": "조합설립인가",
-      "public_data_count": "290건",
+      "public_data_count": "291건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -18477,7 +18477,7 @@
       "name": "청량리제8구역 주택재개발정비사업조합",
       "address": "청량리동 435",
       "stage": "관리처분인가",
-      "public_data_count": "2323건",
+      "public_data_count": "2328건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202011160001",
@@ -22657,7 +22657,7 @@
       "name": "면목역 3의1구역 가로주택정비사업조합",
       "address": "면목동 152-1",
       "stage": "조합설립인가",
-      "public_data_count": "153건",
+      "public_data_count": "148건",
       "timeliness": "16.67%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -22711,7 +22711,7 @@
       "name": "면목역3의8구역 가로주택정비사업조합",
       "address": "면목동 156-1",
       "stage": "조합설립인가",
-      "public_data_count": "103건",
+      "public_data_count": "104건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -23843,7 +23843,7 @@
       "name": "상봉7재정비촉진구역 도시환경정비사업조합",
       "address": "상봉동 88",
       "stage": "사업시행인가",
-      "public_data_count": "1627건",
+      "public_data_count": "1629건",
       "timeliness": "75.0%",
       "completeness": "100.0%",
       "map_record_code": "11260AGZ202009020003",
@@ -24093,7 +24093,7 @@
       "name": "상봉역4구역 가로주택정비사업조합",
       "address": "상봉동 304-4",
       "stage": "조합설립인가",
-      "public_data_count": "127건",
+      "public_data_count": "129건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -25213,7 +25213,7 @@
       "name": "중화역 2의1구역 가로주택정비사업",
       "address": "중화동 329-38",
       "stage": "조합설립인가",
-      "public_data_count": "167건",
+      "public_data_count": "168건",
       "timeliness": "66.67%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -26417,7 +26417,7 @@
       "name": "신길음1구역 재개발정비사업 조합",
       "address": "길음동 31-1",
       "stage": "조합설립인가",
-      "public_data_count": "798건",
+      "public_data_count": "799건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201004308944",
@@ -26859,7 +26859,7 @@
       "name": "동소문제2구역 주택재개발정비사업조합",
       "address": "동소문동2가 33",
       "stage": "조합설립인가",
-      "public_data_count": "1415건",
+      "public_data_count": "1420건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201111248071",
@@ -26895,7 +26895,7 @@
       "name": "보문제5구역 주택재개발정비사업조합",
       "address": "보문동1가 196-11",
       "stage": "착공",
-      "public_data_count": "1431건",
+      "public_data_count": "1434건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201809130116",
@@ -26949,7 +26949,7 @@
       "name": "삼선제5구역 주택재개발정비사업조합",
       "address": "삼선동2가 296",
       "stage": "분양",
-      "public_data_count": "3573건",
+      "public_data_count": "3576건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11290AGZ202101050001",
@@ -28187,7 +28187,7 @@
       "name": "석관4구역 주택정비형 재개발사업",
       "address": "석관동 62-1",
       "stage": "추진위원회승인",
-      "public_data_count": "42건",
+      "public_data_count": "43건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -28685,7 +28685,7 @@
       "name": "장위10구역 주택재개발정비사업조합",
       "address": "장위동 68-37",
       "stage": "분양",
-      "public_data_count": "2851건",
+      "public_data_count": "2852건",
       "timeliness": "50.0%",
       "completeness": "99.77%",
       "map_record_code": null,
@@ -29621,8 +29621,8 @@
       "name": "장위13의8구역 가로주택정비사업",
       "address": "장위동 219-114",
       "stage": "조합설립인가",
-      "public_data_count": "70건",
-      "timeliness": "0.0%",
+      "public_data_count": "73건",
+      "timeliness": "-",
       "completeness": "98.76%",
       "map_record_code": null,
       "cafe_id": "jang13-8",
@@ -29675,8 +29675,8 @@
       "name": "장위13-6 가로주택정비사업 조합",
       "address": "장위동 232-41",
       "stage": "조합설립인가",
-      "public_data_count": "86건",
-      "timeliness": "0.0%",
+      "public_data_count": "89건",
+      "timeliness": "-",
       "completeness": "98.98%",
       "map_record_code": null,
       "cafe_id": "jang136",
@@ -29693,8 +29693,8 @@
       "name": "장위13의9구역 가로주택정비사업",
       "address": "장위동 232-125",
       "stage": "조합설립인가",
-      "public_data_count": "74건",
-      "timeliness": "0.0%",
+      "public_data_count": "77건",
+      "timeliness": "-",
       "completeness": "98.8%",
       "map_record_code": null,
       "cafe_id": "jang139",
@@ -29711,7 +29711,7 @@
       "name": "장위15구역 주택재개발정비사업조합",
       "address": "장위동 233-42",
       "stage": "조합설립인가",
-      "public_data_count": "1411건",
+      "public_data_count": "1412건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -29729,7 +29729,7 @@
       "name": "장위14구역 주택재개발정비사업조합",
       "address": "장위동 233-552",
       "stage": "조합설립인가",
-      "public_data_count": "2238건",
+      "public_data_count": "2242건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -29855,8 +29855,8 @@
       "name": "정릉동 223-1번지 일대 가로주택정비사업 조합",
       "address": "정릉동 223-1",
       "stage": "조합설립인가",
-      "public_data_count": "58건",
-      "timeliness": "75.0%",
+      "public_data_count": "70건",
+      "timeliness": "60.0%",
       "completeness": "100.0%",
       "map_record_code": null,
       "cafe_id": "jung223-1",
@@ -29873,7 +29873,7 @@
       "name": "정릉동 226-1번지 일대 가로주택정비사업 조합",
       "address": "정릉동 226-1",
       "stage": "조합설립인가",
-      "public_data_count": "170건",
+      "public_data_count": "173건",
       "timeliness": "57.14%",
       "completeness": "99.65%",
       "map_record_code": null,
@@ -30017,7 +30017,7 @@
       "name": "정릉2구역(가칭) 주택정비형 재개발사업",
       "address": "정릉동 710-81",
       "stage": "추진위원회승인",
-      "public_data_count": "6건",
+      "public_data_count": "9건",
       "timeliness": "50.0%",
       "completeness": "67.35%",
       "map_record_code": null,
@@ -30125,7 +30125,7 @@
       "name": "종암동 개운산마을 가로주택정비사업조합",
       "address": "종암동 81-188",
       "stage": "착공",
-      "public_data_count": "569건",
+      "public_data_count": "570건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -30233,8 +30233,8 @@
       "name": "하월곡1구역 주택정비형 재개발사업",
       "address": "하월곡동 70-1",
       "stage": "추진위원회승인",
-      "public_data_count": "135건",
-      "timeliness": "-",
+      "public_data_count": "138건",
+      "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
       "cafe_id": "hawolgok1",
@@ -30269,7 +30269,7 @@
       "name": "신월곡1구역 도시환경정비사업조합",
       "address": "하월곡동 88-142",
       "stage": "관리처분인가",
-      "public_data_count": "2126건",
+      "public_data_count": "2127건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -30699,7 +30699,7 @@
       "name": "미아동 130번지 일대 주택정비형 재개발정비사업",
       "address": "미아동 130",
       "stage": "추진위원회승인",
-      "public_data_count": "35건",
+      "public_data_count": "36건",
       "timeliness": "0.0%",
       "completeness": "93.33%",
       "map_record_code": null,
@@ -31529,7 +31529,7 @@
       "name": "미아동 258번지 일대 주택정비형 재개발사업",
       "address": "미아동 258",
       "stage": "추진위원회승인",
-      "public_data_count": "113건",
+      "public_data_count": "115건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -31565,7 +31565,7 @@
       "name": "미아2재정비촉진구역 주택재개발정비사업 조합",
       "address": "미아동 403",
       "stage": "조합설립인가",
-      "public_data_count": "2153건",
+      "public_data_count": "2154건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -31601,7 +31601,7 @@
       "name": "삼양사거리역세권 장기전세주택 도시정비형 재개발구역",
       "address": "미아동 754-120",
       "stage": "사업시행자지정",
-      "public_data_count": "72건",
+      "public_data_count": "73건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -31655,7 +31655,7 @@
       "name": "미아제3구역 주택재개발정비사업조합",
       "address": "미아동 791-364",
       "stage": "분양",
-      "public_data_count": "2467건",
+      "public_data_count": "2469건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201810260126",
@@ -31691,7 +31691,7 @@
       "name": "미아1구역 가로주택정비사업 조합",
       "address": "미아동 833-2",
       "stage": "조합설립인가",
-      "public_data_count": "397건",
+      "public_data_count": "400건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -31709,7 +31709,7 @@
       "name": "미아4재정비촉진구역 주택재건축정비사업조합",
       "address": "미아동 1261-376",
       "stage": "관리처분인가",
-      "public_data_count": "2456건",
+      "public_data_count": "2462건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202010200004",
@@ -32799,7 +32799,7 @@
       "name": "번동 5구역 가로주택 정비사업 조합",
       "address": "번동 427-63",
       "stage": "착공",
-      "public_data_count": "1051건",
+      "public_data_count": "1055건",
       "timeliness": "25.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -32835,7 +32835,7 @@
       "name": "번동2구역 가로주택정비사업조합",
       "address": "번동 429-97",
       "stage": "착공",
-      "public_data_count": "1103건",
+      "public_data_count": "1105건",
       "timeliness": "33.33%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -32853,7 +32853,7 @@
       "name": "번동1구역 가로주택정비사업조합",
       "address": "번동 429-114",
       "stage": "착공",
-      "public_data_count": "1150건",
+      "public_data_count": "1155건",
       "timeliness": "33.33%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -32889,7 +32889,7 @@
       "name": "번동 441-3번지 일대 주택재개발정비사업",
       "address": "번동 441-3",
       "stage": "추진위원회승인",
-      "public_data_count": "43건",
+      "public_data_count": "50건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -33677,7 +33677,7 @@
       "name": "도봉제2구역 주택재개발정비사업조합",
       "address": "도봉동 95",
       "stage": "준공인가",
-      "public_data_count": "4993건",
+      "public_data_count": "5001건",
       "timeliness": "90.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ200812027645",
@@ -33975,7 +33975,7 @@
       "name": "방학성삼빌라가로주택정비사업",
       "address": "방학동 343",
       "stage": "사업시행인가",
-      "public_data_count": "615건",
+      "public_data_count": "616건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11320AGZ202406260001",
@@ -34615,7 +34615,7 @@
       "name": "대신빌라소규모재건축사업",
       "address": "창동 466",
       "stage": "사업시행인가",
-      "public_data_count": "291건",
+      "public_data_count": "293건",
       "timeliness": "13.33%",
       "completeness": "94.76%",
       "map_record_code": "11320AGZ202504280001",
@@ -35307,8 +35307,8 @@
       "name": "대명아파트 소규모재건축정비사업위원회",
       "address": "공릉동 270-71",
       "stage": "착공",
-      "public_data_count": "391건",
-      "timeliness": "33.33%",
+      "public_data_count": "394건",
+      "timeliness": "50.0%",
       "completeness": "99.2%",
       "map_record_code": null,
       "cafe_id": "dmapt270",
@@ -36047,7 +36047,7 @@
       "name": "상계5재정비촉진구역 주택재개발정비사업 조합",
       "address": "상계동 109-43",
       "stage": "조합설립인가",
-      "public_data_count": "1994건",
+      "public_data_count": "1996건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201807300032",
@@ -36065,7 +36065,7 @@
       "name": "상계2재정비촉진구역 주택재개발정비사업 조합",
       "address": "상계동 자력2구역 17블럭 1롯트",
       "stage": "사업시행인가",
-      "public_data_count": "1682건",
+      "public_data_count": "1683건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ200309054208",
@@ -36155,7 +36155,7 @@
       "name": "월계동주택재건축정비사업조합",
       "address": "월계동 487-17",
       "stage": "분양",
-      "public_data_count": "1617건",
+      "public_data_count": "1625건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -36263,7 +36263,7 @@
       "name": "하계한신동성아파트 재건축사업",
       "address": "하계동 256-5",
       "stage": "정비계획 수립",
-      "public_data_count": "5건",
+      "public_data_count": "6건",
       "timeliness": "-",
       "completeness": "-",
       "map_record_code": null,
@@ -40415,768 +40415,10 @@
       "map_record_code": "11380AGZ202308080001",
       "cafe_id": "dokbawee",
       "source_url": "https://cleanup.seoul.go.kr/cleanup/bsnssttus/lscrMainIndx.do?scupBsnsSttus.signguCode=11380",
-      "lat": 37.6183356,
-      "lng": 126.9319522,
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [
-              126.9329827,
-              37.6183618
-            ],
-            [
-              126.9330041,
-              37.6183075
-            ],
-            [
-              126.9330255,
-              37.6182488
-            ],
-            [
-              126.9330512,
-              37.6181554
-            ],
-            [
-              126.9330717,
-              37.6180067
-            ],
-            [
-              126.9330912,
-              37.6178541
-            ],
-            [
-              126.9330864,
-              37.6178233
-            ],
-            [
-              126.9330774,
-              37.6177706
-            ],
-            [
-              126.9330842,
-              37.6177637
-            ],
-            [
-              126.9330788,
-              37.6177318
-            ],
-            [
-              126.9330754,
-              37.6177121
-            ],
-            [
-              126.9330711,
-              37.6176914
-            ],
-            [
-              126.933078,
-              37.6176902
-            ],
-            [
-              126.9330645,
-              37.6175749
-            ],
-            [
-              126.9330535,
-              37.6174997
-            ],
-            [
-              126.9330361,
-              37.6174581
-            ],
-            [
-              126.9330241,
-              37.6174281
-            ],
-            [
-              126.9329808,
-              37.6173181
-            ],
-            [
-              126.9329238,
-              37.6172118
-            ],
-            [
-              126.9329222,
-              37.6172094
-            ],
-            [
-              126.9328976,
-              37.6171724
-            ],
-            [
-              126.93282,
-              37.6170679
-            ],
-            [
-              126.9328127,
-              37.6170701
-            ],
-            [
-              126.9328033,
-              37.6170589
-            ],
-            [
-              126.9327765,
-              37.61703
-            ],
-            [
-              126.9327463,
-              37.6169914
-            ],
-            [
-              126.932721,
-              37.6169598
-            ],
-            [
-              126.9326769,
-              37.6168873
-            ],
-            [
-              126.9326659,
-              37.6168525
-            ],
-            [
-              126.9326542,
-              37.6168129
-            ],
-            [
-              126.932637,
-              37.6167573
-            ],
-            [
-              126.9326213,
-              37.6167088
-            ],
-            [
-              126.9326153,
-              37.6166455
-            ],
-            [
-              126.9326297,
-              37.6165675
-            ],
-            [
-              126.9326418,
-              37.6165201
-            ],
-            [
-              126.9326791,
-              37.6164388
-            ],
-            [
-              126.932678,
-              37.6164386
-            ],
-            [
-              126.9327032,
-              37.6163821
-            ],
-            [
-              126.9327169,
-              37.6163493
-            ],
-            [
-              126.932747,
-              37.6162537
-            ],
-            [
-              126.9327823,
-              37.6161536
-            ],
-            [
-              126.9328081,
-              37.6160811
-            ],
-            [
-              126.9328305,
-              37.6160297
-            ],
-            [
-              126.9328056,
-              37.6160119
-            ],
-            [
-              126.932757,
-              37.6160224
-            ],
-            [
-              126.9326442,
-              37.616047
-            ],
-            [
-              126.9326206,
-              37.6160521
-            ],
-            [
-              126.9324896,
-              37.6160807
-            ],
-            [
-              126.9324677,
-              37.6160854
-            ],
-            [
-              126.9324802,
-              37.6161238
-            ],
-            [
-              126.9324746,
-              37.6161968
-            ],
-            [
-              126.9324845,
-              37.6162243
-            ],
-            [
-              126.9325158,
-              37.6163091
-            ],
-            [
-              126.9325221,
-              37.6163277
-            ],
-            [
-              126.932526,
-              37.6163586
-            ],
-            [
-              126.9325274,
-              37.6163625
-            ],
-            [
-              126.9325268,
-              37.616379
-            ],
-            [
-              126.9325173,
-              37.6164017
-            ],
-            [
-              126.9324341,
-              37.6164023
-            ],
-            [
-              126.9323814,
-              37.6164133
-            ],
-            [
-              126.9323194,
-              37.6164551
-            ],
-            [
-              126.9322954,
-              37.6164978
-            ],
-            [
-              126.9322888,
-              37.6165431
-            ],
-            [
-              126.9322833,
-              37.6166215
-            ],
-            [
-              126.9322729,
-              37.6166983
-            ],
-            [
-              126.9322501,
-              37.6167685
-            ],
-            [
-              126.9322263,
-              37.6168233
-            ],
-            [
-              126.9322154,
-              37.6168483
-            ],
-            [
-              126.9321027,
-              37.6169973
-            ],
-            [
-              126.9321226,
-              37.6170047
-            ],
-            [
-              126.93224,
-              37.6170505
-            ],
-            [
-              126.9322481,
-              37.6170746
-            ],
-            [
-              126.9322169,
-              37.6171186
-            ],
-            [
-              126.9321996,
-              37.6171449
-            ],
-            [
-              126.9322301,
-              37.6171478
-            ],
-            [
-              126.932234,
-              37.6171465
-            ],
-            [
-              126.9322445,
-              37.6171956
-            ],
-            [
-              126.9322223,
-              37.617216
-            ],
-            [
-              126.9322948,
-              37.617268
-            ],
-            [
-              126.9322994,
-              37.6173226
-            ],
-            [
-              126.9323022,
-              37.6173569
-            ],
-            [
-              126.9321324,
-              37.6173609
-            ],
-            [
-              126.9319521,
-              37.6173804
-            ],
-            [
-              126.931901,
-              37.6173932
-            ],
-            [
-              126.9317504,
-              37.6173784
-            ],
-            [
-              126.9317263,
-              37.6173794
-            ],
-            [
-              126.9315872,
-              37.6173546
-            ],
-            [
-              126.93156,
-              37.6173493
-            ],
-            [
-              126.9315368,
-              37.6173449
-            ],
-            [
-              126.9314977,
-              37.6173376
-            ],
-            [
-              126.9314527,
-              37.6173286
-            ],
-            [
-              126.9313607,
-              37.6173091
-            ],
-            [
-              126.9313272,
-              37.6173211
-            ],
-            [
-              126.9313033,
-              37.6173296
-            ],
-            [
-              126.931091,
-              37.617405
-            ],
-            [
-              126.931098,
-              37.6174232
-            ],
-            [
-              126.9310655,
-              37.6174316
-            ],
-            [
-              126.9310603,
-              37.617421
-            ],
-            [
-              126.9310203,
-              37.617429
-            ],
-            [
-              126.9310237,
-              37.6174424
-            ],
-            [
-              126.9310001,
-              37.6174586
-            ],
-            [
-              126.9309461,
-              37.6174574
-            ],
-            [
-              126.9308703,
-              37.6174689
-            ],
-            [
-              126.9308309,
-              37.6174929
-            ],
-            [
-              126.9308172,
-              37.6175223
-            ],
-            [
-              126.9308072,
-              37.6176068
-            ],
-            [
-              126.9308577,
-              37.6176981
-            ],
-            [
-              126.9309046,
-              37.6176525
-            ],
-            [
-              126.9310039,
-              37.6176491
-            ],
-            [
-              126.9310588,
-              37.6176178
-            ],
-            [
-              126.9310544,
-              37.6175886
-            ],
-            [
-              126.9311018,
-              37.6176268
-            ],
-            [
-              126.9311849,
-              37.6175877
-            ],
-            [
-              126.9312917,
-              37.6175392
-            ],
-            [
-              126.9312239,
-              37.6180053
-            ],
-            [
-              126.9311709,
-              37.6184436
-            ],
-            [
-              126.9311676,
-              37.6184873
-            ],
-            [
-              126.931208,
-              37.6186229
-            ],
-            [
-              126.9311838,
-              37.6186374
-            ],
-            [
-              126.9310397,
-              37.6187294
-            ],
-            [
-              126.9308847,
-              37.6188271
-            ],
-            [
-              126.9306222,
-              37.6188649
-            ],
-            [
-              126.9306801,
-              37.6189971
-            ],
-            [
-              126.9308934,
-              37.6188646
-            ],
-            [
-              126.9309011,
-              37.6188976
-            ],
-            [
-              126.9309115,
-              37.6189422
-            ],
-            [
-              126.9309225,
-              37.6189892
-            ],
-            [
-              126.9309304,
-              37.6190247
-            ],
-            [
-              126.9309473,
-              37.6190995
-            ],
-            [
-              126.9309536,
-              37.619132
-            ],
-            [
-              126.9309869,
-              37.6192727
-            ],
-            [
-              126.9310075,
-              37.6193636
-            ],
-            [
-              126.9310293,
-              37.6194524
-            ],
-            [
-              126.9310505,
-              37.6195462
-            ],
-            [
-              126.9310739,
-              37.6196465
-            ],
-            [
-              126.9310828,
-              37.6197528
-            ],
-            [
-              126.9310846,
-              37.6197736
-            ],
-            [
-              126.9310861,
-              37.6197909
-            ],
-            [
-              126.9310872,
-              37.6198332
-            ],
-            [
-              126.9310935,
-              37.6198708
-            ],
-            [
-              126.9311194,
-              37.6199986
-            ],
-            [
-              126.9311419,
-              37.6201
-            ],
-            [
-              126.9312874,
-              37.6200783
-            ],
-            [
-              126.9314274,
-              37.6200651
-            ],
-            [
-              126.9315287,
-              37.6200557
-            ],
-            [
-              126.931584,
-              37.6200233
-            ],
-            [
-              126.9316769,
-              37.6199701
-            ],
-            [
-              126.9317103,
-              37.6199909
-            ],
-            [
-              126.9317401,
-              37.6199747
-            ],
-            [
-              126.9317616,
-              37.6199983
-            ],
-            [
-              126.9317636,
-              37.6200844
-            ],
-            [
-              126.931764,
-              37.6201022
-            ],
-            [
-              126.931796,
-              37.6201091
-            ],
-            [
-              126.9318016,
-              37.6201059
-            ],
-            [
-              126.9319084,
-              37.6201072
-            ],
-            [
-              126.9319702,
-              37.6201079
-            ],
-            [
-              126.9320236,
-              37.620017
-            ],
-            [
-              126.9320777,
-              37.619862
-            ],
-            [
-              126.9320836,
-              37.6198453
-            ],
-            [
-              126.9320809,
-              37.6198298
-            ],
-            [
-              126.932085,
-              37.6198083
-            ],
-            [
-              126.9321034,
-              37.6197098
-            ],
-            [
-              126.9321177,
-              37.6196642
-            ],
-            [
-              126.9321255,
-              37.6196394
-            ],
-            [
-              126.9321352,
-              37.6196034
-            ],
-            [
-              126.9321456,
-              37.6195675
-            ],
-            [
-              126.9321521,
-              37.6195563
-            ],
-            [
-              126.9321588,
-              37.6195446
-            ],
-            [
-              126.9322075,
-              37.6194598
-            ],
-            [
-              126.9322405,
-              37.6194335
-            ],
-            [
-              126.9322606,
-              37.6194171
-            ],
-            [
-              126.9323124,
-              37.6193388
-            ],
-            [
-              126.9323781,
-              37.6192395
-            ],
-            [
-              126.9323962,
-              37.6192145
-            ],
-            [
-              126.9325035,
-              37.619085
-            ],
-            [
-              126.9325743,
-              37.6189944
-            ],
-            [
-              126.9325863,
-              37.6189786
-            ],
-            [
-              126.9326556,
-              37.6188883
-            ],
-            [
-              126.9327454,
-              37.6187786
-            ],
-            [
-              126.9327613,
-              37.6187596
-            ],
-            [
-              126.9328265,
-              37.6186708
-            ],
-            [
-              126.9328291,
-              37.6186672
-            ],
-            [
-              126.9328395,
-              37.6186505
-            ],
-            [
-              126.9328448,
-              37.6186421
-            ],
-            [
-              126.9329148,
-              37.6185093
-            ],
-            [
-              126.9329249,
-              37.6184993
-            ],
-            [
-              126.9329374,
-              37.6184771
-            ],
-            [
-              126.9329827,
-              37.6183618
-            ]
-          ]
-        ]
-      },
-      "geometry_source": "서울도시공간포털 공식 사업경계"
+      "lat": null,
+      "lng": null,
+      "geometry": null,
+      "geometry_source": null
     },
     {
       "id": "11380:재개발(주택정비형):불광제5 주택재개발정비사업 조합:불광동 238",
@@ -41185,7 +40427,7 @@
       "name": "불광제5 주택재개발정비사업 조합",
       "address": "불광동 238",
       "stage": "관리처분인가",
-      "public_data_count": "3585건",
+      "public_data_count": "3586건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -41239,7 +40481,7 @@
       "name": "불광8 주택정비형 재개발사업",
       "address": "불광동 600",
       "stage": "조합설립인가",
-      "public_data_count": "57건",
+      "public_data_count": "58건",
       "timeliness": "28.57%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202411130001",
@@ -43477,7 +42719,7 @@
       "name": "증산5재정비촉진구역 주택재개발정비사업 조합",
       "address": "증산동 195",
       "stage": "철거",
-      "public_data_count": "2144건",
+      "public_data_count": "2147건",
       "timeliness": "100.0%",
       "completeness": "99.99%",
       "map_record_code": null,
@@ -43729,7 +42971,7 @@
       "name": "연희제1구역 주택재개발정비사업조합",
       "address": "연희동 533",
       "stage": "착공",
-      "public_data_count": "3442건",
+      "public_data_count": "3456건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201006107858",
@@ -45321,7 +44563,7 @@
       "name": "연희2구역 공공재개발사업",
       "address": "연희동 721-6",
       "stage": "추진위원회승인",
-      "public_data_count": "89건",
+      "public_data_count": "90건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202312120002",
@@ -46097,7 +45339,7 @@
       "name": "마포로5구역제2지구 도시정비형재개발사업조합",
       "address": "충정로3가 250",
       "stage": "조합설립인가",
-      "public_data_count": "868건",
+      "public_data_count": "869건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ000000001811",
@@ -46151,7 +45393,7 @@
       "name": "홍은15구역 주택정비형 재개발사업",
       "address": "홍은동 8-400",
       "stage": "조합설립인가",
-      "public_data_count": "134건",
+      "public_data_count": "138건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -49217,7 +48459,7 @@
       "name": "홍은동322-1일원 가로주택정비사업",
       "address": "홍은동 322-1",
       "stage": "사업시행인가",
-      "public_data_count": "979건",
+      "public_data_count": "982건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11410AGZ202405080001",
@@ -49999,7 +49241,7 @@
       "name": "홍은동355번지 일대 가로주택정비사업",
       "address": "홍은동 355",
       "stage": "철거",
-      "public_data_count": "261건",
+      "public_data_count": "262건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -50617,7 +49859,7 @@
       "name": "공덕8구역 주택정비형 재개발사업",
       "address": "공덕동 11-24",
       "stage": "추진위원회승인",
-      "public_data_count": "60건",
+      "public_data_count": "61건",
       "timeliness": "0.0%",
       "completeness": "96.42%",
       "map_record_code": null,
@@ -51353,7 +50595,7 @@
       "name": "공덕7구역 주택정비형 재개발사업",
       "address": "공덕동 115-97",
       "stage": "조합설립인가",
-      "public_data_count": "143건",
+      "public_data_count": "144건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -51461,7 +50703,7 @@
       "name": "마포로1구역 제10지구 도시정비형 재개발사업 조합",
       "address": "도화동 536",
       "stage": "사업시행인가",
-      "public_data_count": "840건",
+      "public_data_count": "843건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -51623,7 +50865,7 @@
       "name": "망원동 464-1번지 일원 가로주택정비사업",
       "address": "망원동 464-1",
       "stage": "조합설립인가",
-      "public_data_count": "178건",
+      "public_data_count": "179건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -51677,7 +50919,7 @@
       "name": "성산동200에서258번지일대 가로주택정비사업",
       "address": "성산동 200-258",
       "stage": "조합설립인가",
-      "public_data_count": "70건",
+      "public_data_count": "73건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -52813,7 +52055,7 @@
       "name": "광흥창역세권(신수동 301-1일원) 장기전세주택 도시정비형 재개발구역",
       "address": "신수동 301-1",
       "stage": "추진위원회승인",
-      "public_data_count": "35건",
+      "public_data_count": "36건",
       "timeliness": "85.71%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -53011,7 +52253,7 @@
       "name": "염리동 488-14번지 일대 주택정비형 재개발정비사업조합",
       "address": "염리동 488-14",
       "stage": "조합설립인가",
-      "public_data_count": "165건",
+      "public_data_count": "170건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -53191,7 +52433,7 @@
       "name": "목동 523번지 일대 도시정비형 재개발사업(역세권 활성화 사업)",
       "address": "목동 523",
       "stage": "조합설립인가",
-      "public_data_count": "19건",
+      "public_data_count": "20건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -53299,7 +52541,7 @@
       "name": "목동4단지아파트 재건축정비사업",
       "address": "목동 904",
       "stage": "조합설립인가",
-      "public_data_count": "203건",
+      "public_data_count": "206건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -53703,7 +52945,7 @@
       "name": "신월1동 99-1번지 일원 가로주택정비사업(신월1동 모아타운 3구역)",
       "address": "신월동 99-1",
       "stage": "조합설립인가",
-      "public_data_count": "2건",
+      "public_data_count": "3건",
       "timeliness": "-",
       "completeness": "-",
       "map_record_code": null,
@@ -53811,7 +53053,7 @@
       "name": "신월4구역 주택재건축정비사업조합",
       "address": "신월동 489-3",
       "stage": "이전고시",
-      "public_data_count": "1555건",
+      "public_data_count": "1557건",
       "timeliness": "80.0%",
       "completeness": "99.91%",
       "map_record_code": "11000AGZ201612160320",
@@ -56247,8 +55489,8 @@
       "name": "목동10단지아파트 재건축정비사업",
       "address": "신정동 311",
       "stage": "사업시행자지정",
-      "public_data_count": "157건",
-      "timeliness": "0.0%",
+      "public_data_count": "162건",
+      "timeliness": "33.33%",
       "completeness": "100.0%",
       "map_record_code": null,
       "cafe_id": "mokdong10",
@@ -56283,7 +55525,7 @@
       "name": "목동8단지아파트 재건축정비사업조합",
       "address": "신정동 314",
       "stage": "조합설립인가",
-      "public_data_count": "321건",
+      "public_data_count": "322건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -56319,7 +55561,7 @@
       "name": "목동12단지아파트 재건축정비사업",
       "address": "신정동 326",
       "stage": "조합설립인가",
-      "public_data_count": "324건",
+      "public_data_count": "325건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -56421,7 +55663,7 @@
       "name": "목동14단지아파트 재건축정비사업",
       "address": "신정동 329",
       "stage": "사업시행자지정",
-      "public_data_count": "149건",
+      "public_data_count": "150건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -57873,7 +57115,7 @@
       "name": "신정4재정비촉진구역 재건축정비사업조합",
       "address": "신정동 1200-1",
       "stage": "관리처분인가",
-      "public_data_count": "1454건",
+      "public_data_count": "1465건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201808210102",
@@ -57891,7 +57133,7 @@
       "name": "신정수정아파트 재건축정비사업",
       "address": "신정동 733-31",
       "stage": "관리처분인가",
-      "public_data_count": "694건",
+      "public_data_count": "695건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": "11470AGZ202010240001",
@@ -58745,7 +57987,7 @@
       "name": "(가칭)방화지역주택조합",
       "address": "공항동 21",
       "stage": "조합원 모집신고",
-      "public_data_count": "244건",
+      "public_data_count": "249건",
       "timeliness": "-",
       "completeness": "75.0%",
       "map_record_code": null,
@@ -58889,7 +58131,7 @@
       "name": "등촌2동 모아타운 제2-1구역 가로주택정비사업조합",
       "address": "등촌동 520-3",
       "stage": "조합설립인가",
-      "public_data_count": "42건",
+      "public_data_count": "43건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -58997,7 +58239,7 @@
       "name": "긴등마을주택재건축정비사업조합",
       "address": "마곡동 725-1",
       "stage": "준공인가",
-      "public_data_count": "1260건",
+      "public_data_count": "1261건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": "11500AGZ202301200003",
@@ -59421,7 +58663,7 @@
       "name": "서울빌라 가로주택정비사업조합",
       "address": "방화동 584-1",
       "stage": "사업시행인가",
-      "public_data_count": "646건",
+      "public_data_count": "648건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -59493,7 +58735,7 @@
       "name": "방화3재정비촉진구역 재건축정비사업조합",
       "address": "방화동 615-103",
       "stage": "관리처분인가",
-      "public_data_count": "2252건",
+      "public_data_count": "2257건",
       "timeliness": "80.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202310130001",
@@ -60541,7 +59783,7 @@
       "name": "(가칭)화곡1지역주택조합",
       "address": "화곡동 424-63",
       "stage": "조합원 모집신고",
-      "public_data_count": "136건",
+      "public_data_count": "137건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -60721,7 +59963,7 @@
       "name": "개봉5구역 주택재건축정비사업조합",
       "address": "개봉동 68-64",
       "stage": "이전고시",
-      "public_data_count": "1322건",
+      "public_data_count": "1324건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11530AGZ202102040001",
@@ -61143,7 +60385,7 @@
       "name": "고척제4구역 주택재개발정비사업조합",
       "address": "고척동 148",
       "stage": "착공",
-      "public_data_count": "2491건",
+      "public_data_count": "2496건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201406248369",
@@ -61161,7 +60403,7 @@
       "name": "한성아파트 소규모재건축정비사업",
       "address": "고척동 227-1",
       "stage": "조합설립인가",
-      "public_data_count": "227건",
+      "public_data_count": "229건",
       "timeliness": "60.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -61215,7 +60457,7 @@
       "name": "고척6구역 가로주택정비사업",
       "address": "고척동 241-63",
       "stage": "사업시행자지정",
-      "public_data_count": "149건",
+      "public_data_count": "150건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -61305,7 +60547,7 @@
       "name": "구로동 451번지 일대 가로주택정비사업",
       "address": "구로동 451-1",
       "stage": "조합설립인가",
-      "public_data_count": "34건",
+      "public_data_count": "35건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -61377,7 +60619,7 @@
       "name": "남구로역세권 공공임대주택 도시정비형 재개발사업",
       "address": "구로동 715-24",
       "stage": "사업시행인가",
-      "public_data_count": "387건",
+      "public_data_count": "389건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -61431,7 +60673,7 @@
       "name": "월드빌라소규모재건축정비사업조합",
       "address": "궁동 236-1",
       "stage": "사업시행인가",
-      "public_data_count": "700건",
+      "public_data_count": "703건",
       "timeliness": "50.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -61485,8 +60727,8 @@
       "name": "미래빌라소규모재건축정비사업조합",
       "address": "오류동 68-21",
       "stage": "조합설립인가",
-      "public_data_count": "548건",
-      "timeliness": "-",
+      "public_data_count": "554건",
+      "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
       "cafe_id": "mire6821",
@@ -61539,7 +60781,7 @@
       "name": "오류동 현대연립 주택재건축정비사업조합",
       "address": "오류동 156-15",
       "stage": "관리처분인가",
-      "public_data_count": "1482건",
+      "public_data_count": "1484건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11530AGZ202012210001",
@@ -63481,7 +62723,7 @@
       "name": "대림1구역 신속통합기획",
       "address": "대림동 855-1",
       "stage": "사업시행인가",
-      "public_data_count": "124건",
+      "public_data_count": "129건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -63535,7 +62777,7 @@
       "name": "도림1구역 주택정비형 공공재개발사업(LH)",
       "address": "도림동 26-21",
       "stage": "조합설립인가",
-      "public_data_count": "9건",
+      "public_data_count": "10건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -64847,7 +64089,7 @@
       "name": "신길동96-24역세권 장기전세주택사업(도시정비형 재개발)",
       "address": "신길동 96-24",
       "stage": "추진위원회승인",
-      "public_data_count": "18건",
+      "public_data_count": "19건",
       "timeliness": "50.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -68871,7 +68113,7 @@
       "name": "신길우성1차아파트 재건축정비사업",
       "address": "신길동 365",
       "stage": "추진위원회승인",
-      "public_data_count": "98건",
+      "public_data_count": "99건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -68943,7 +68185,7 @@
       "name": "대방역세권 장기전세주택 도시정비형 재개발사업",
       "address": "신길동 1358",
       "stage": "추진위원회승인",
-      "public_data_count": "10건",
+      "public_data_count": "11건",
       "timeliness": "0.0%",
       "completeness": "63.16%",
       "map_record_code": null,
@@ -71583,7 +70825,7 @@
       "name": "삼성아파트 주택재건축정비사업조합",
       "address": "신길동 4759",
       "stage": "조합설립인가",
-      "public_data_count": "1230건",
+      "public_data_count": "1232건",
       "timeliness": "85.71%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201511300261",
@@ -71637,7 +70879,7 @@
       "name": "신동아아파트 주택재건축정비사업조합",
       "address": "양평동1가 20",
       "stage": "조합설립인가",
-      "public_data_count": "1887건",
+      "public_data_count": "1891건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201107139967",
@@ -71655,7 +70897,7 @@
       "name": "69. 양평제12구역 도시환경정비사업조합",
       "address": "양평동1가 243-1",
       "stage": "이전고시",
-      "public_data_count": "1254건",
+      "public_data_count": "1255건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ200910128911",
@@ -71673,7 +70915,7 @@
       "name": "71. 양평제14구역 도시환경정비사업 조합설립추진위원회",
       "address": "양평동2가 29-6",
       "stage": "추진위원회승인",
-      "public_data_count": "448건",
+      "public_data_count": "449건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201311259092",
@@ -71945,7 +71187,7 @@
       "name": "여의도 광장아파트 28주택재건축정비사업",
       "address": "여의도동 28",
       "stage": "조합설립인가",
-      "public_data_count": "368건",
+      "public_data_count": "369건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -71981,7 +71223,7 @@
       "name": "여의도 삼부아파트 주택재건축정비사업조합",
       "address": "여의도동 30-2",
       "stage": "조합설립인가",
-      "public_data_count": "779건",
+      "public_data_count": "783건",
       "timeliness": "87.5%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -72107,7 +71349,7 @@
       "name": "여의도 한양아파트 재건축정비사업",
       "address": "여의도동 42",
       "stage": "사업시행인가",
-      "public_data_count": "546건",
+      "public_data_count": "547건",
       "timeliness": "66.67%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -72383,7 +71625,7 @@
       "name": "여의도 진주아파트 재건축정비사업",
       "address": "여의도동 54",
       "stage": "조합설립인가",
-      "public_data_count": "285건",
+      "public_data_count": "290건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -72617,7 +71859,7 @@
       "name": "영등포 도심 역세권 도시정비형 재개발사업",
       "address": "영등포동4가 431-6",
       "stage": "조합설립인가",
-      "public_data_count": "621건",
+      "public_data_count": "622건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -72653,7 +71895,7 @@
       "name": "영등포1-12 재정비촉진구역 재개발정비사업 조합",
       "address": "영등포동5가 22-3",
       "stage": "조합설립인가",
-      "public_data_count": "1098건",
+      "public_data_count": "1101건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -72833,7 +72075,7 @@
       "name": "영등포1-11재정비촉진구역 도시환경정비사업조합",
       "address": "영등포동5가 30",
       "stage": "사업시행인가",
-      "public_data_count": "983건",
+      "public_data_count": "984건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -72959,7 +72201,7 @@
       "name": "노량진4재정비촉진구역 조합",
       "address": "노량진동 227-5",
       "stage": "관리처분인가",
-      "public_data_count": "1711건",
+      "public_data_count": "1714건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202408070002",
@@ -74139,7 +73381,7 @@
       "name": "노량진3재정비촉진구역 조합",
       "address": "노량진동 232-19",
       "stage": "관리처분인가",
-      "public_data_count": "1135건",
+      "public_data_count": "1136건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11590AGZ201905210002",
@@ -77619,7 +76861,7 @@
       "name": "노량진7재정비촉진구역 조합",
       "address": "대방동 13-31",
       "stage": "관리처분인가",
-      "public_data_count": "2675건",
+      "public_data_count": "2676건",
       "timeliness": "93.33%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ2017070",
@@ -77655,7 +76897,7 @@
       "name": "노량진8재정비촉진구역 조합",
       "address": "대방동 23-61",
       "stage": "분양",
-      "public_data_count": "2632건",
+      "public_data_count": "2633건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202305240003",
@@ -78831,7 +78073,7 @@
       "name": "극동강변소규모재건축정비사업조합",
       "address": "본동 148-2",
       "stage": "조합설립인가",
-      "public_data_count": "91건",
+      "public_data_count": "96건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -78867,7 +78109,7 @@
       "name": "사당3 주택재건축 정비사업조합",
       "address": "사당동 41-17",
       "stage": "조합해산",
-      "public_data_count": "2718건",
+      "public_data_count": "2719건",
       "timeliness": "0.0%",
       "completeness": "99.95%",
       "map_record_code": "11590AGZ202303290001",
@@ -80217,7 +79459,7 @@
       "name": "사당동 192-1번지일대 신남성연립 가로주택정비사업조합",
       "address": "사당동 192-1",
       "stage": "조합설립인가",
-      "public_data_count": "395건",
+      "public_data_count": "396건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -80379,7 +79621,7 @@
       "name": "사당5주택재건축정비사업조합",
       "address": "사당동 303",
       "stage": "사업시행인가",
-      "public_data_count": "1341건",
+      "public_data_count": "1343건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202103080001",
@@ -80771,7 +80013,7 @@
       "name": "사당동 318-99번지일대 재개발정비사업",
       "address": "사당동 318-99",
       "stage": "추진위원회승인",
-      "public_data_count": "221건",
+      "public_data_count": "222건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -81971,7 +81213,7 @@
       "name": "흑석9재정비촉진구역 주택재개발정비사업",
       "address": "흑석동 90",
       "stage": "착공",
-      "public_data_count": "2794건",
+      "public_data_count": "2804건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201904020098",
@@ -81989,7 +81231,7 @@
       "name": "흑석2재정비촉진구역 공공재개발정비사업(도시정비형)",
       "address": "흑석동 99-3",
       "stage": "추진위원회승인",
-      "public_data_count": "1161건",
+      "public_data_count": "1165건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ198604152458",
@@ -86955,7 +86197,7 @@
       "name": "봉천제4-1-2구역 주택재개발정비사업 조합",
       "address": "봉천동 산 101",
       "stage": "분양",
-      "public_data_count": "1426건",
+      "public_data_count": "1429건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201706128619",
@@ -86973,8 +86215,8 @@
       "name": "봉천4-1-3구역 주택재개발정비사업조합",
       "address": "봉천동 480",
       "stage": "관리처분인가",
-      "public_data_count": "2397건",
-      "timeliness": "90.0%",
+      "public_data_count": "2401건",
+      "timeliness": "91.67%",
       "completeness": "99.95%",
       "map_record_code": "11000AGZ201105027941",
       "cafe_id": "bongchun3",
@@ -87027,7 +86269,7 @@
       "name": "봉천제14구역 재개발정비사업조합",
       "address": "봉천동 1",
       "stage": "사업시행인가",
-      "public_data_count": "1110건",
+      "public_data_count": "1113건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11620AGZ202112090002",
@@ -87963,7 +87205,7 @@
       "name": "신림2재정비촉진구역 재개발정비사업조합",
       "address": "신림동 324-25",
       "stage": "철거",
-      "public_data_count": "4348건",
+      "public_data_count": "4350건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ200901087672",
@@ -88052,7 +87294,7 @@
       "business_type": "재개발(주택정비형)",
       "name": "신림8구역 재개발정비사업",
       "address": "신림동 650",
-      "stage": "추진위원회승인",
+      "stage": "조합설립인가",
       "public_data_count": "137건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
@@ -89175,7 +88417,7 @@
       "name": "미성아파트 재건축정비사업 조합",
       "address": "신림동 1656",
       "stage": "사업시행인가",
-      "public_data_count": "995건",
+      "public_data_count": "998건",
       "timeliness": "80.0%",
       "completeness": "99.81%",
       "map_record_code": "11000AGZ201012229922",
@@ -89283,7 +88525,7 @@
       "name": "반포현대아파트주택재건축정비사업조합",
       "address": "반포동 30-15",
       "stage": "이전고시",
-      "public_data_count": "1584건",
+      "public_data_count": "1585건",
       "timeliness": "-",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201711300458",
@@ -89789,7 +89031,7 @@
       "name": "반포주공1단지(1,2,4주구) 주택재건축정비사업 조합",
       "address": "반포동 810",
       "stage": "착공",
-      "public_data_count": "3948건",
+      "public_data_count": "3960건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201711300456",
@@ -90807,7 +90049,7 @@
       "name": "방배13구역 주택재건축정비사업조합",
       "address": "방배동 541-2",
       "stage": "철거",
-      "public_data_count": "2426건",
+      "public_data_count": "2428건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201711290450",
@@ -91111,8 +90353,8 @@
       "name": "방배14구역 주택재건축정비사업조합",
       "address": "방배동 975-35",
       "stage": "철거",
-      "public_data_count": "2508건",
-      "timeliness": "84.62%",
+      "public_data_count": "2521건",
+      "timeliness": "85.71%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201812060939",
       "cafe_id": "bangbae14",
@@ -91147,7 +90389,7 @@
       "name": "방배신동아아파트 재건축정비사업조합",
       "address": "방배동 988-1",
       "stage": "착공",
-      "public_data_count": "519건",
+      "public_data_count": "520건",
       "timeliness": "44.44%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202006260001",
@@ -91443,7 +90685,7 @@
       "name": "방배삼익아파트 주택재건축정비사업조합",
       "address": "방배동 1018-1",
       "stage": "분양",
-      "public_data_count": "1747건",
+      "public_data_count": "1749건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201203130016",
@@ -91479,7 +90721,7 @@
       "name": "방배대우효령아파트 주택재건축정비사업 조합설립추진위원회",
       "address": "방배동 1038",
       "stage": "추진위원회승인",
-      "public_data_count": "56건",
+      "public_data_count": "57건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -91877,7 +91119,7 @@
       "name": "신반포12차아파트 재건축정비사업조합",
       "address": "잠원동 50-5",
       "stage": "관리처분인가",
-      "public_data_count": "1731건",
+      "public_data_count": "1733건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11650UTZ202205020001",
@@ -91949,7 +91191,7 @@
       "name": "신반포16차아파트 주택재건축정비사업조합",
       "address": "잠원동 55-10",
       "stage": "관리처분인가",
-      "public_data_count": "1634건",
+      "public_data_count": "1636건",
       "timeliness": "90.0%",
       "completeness": "100.0%",
       "map_record_code": "11650UTZ202205020001",
@@ -92075,7 +91317,7 @@
       "name": "신반포19차 25차(아) 재건축정비사업조합",
       "address": "잠원동 61-2",
       "stage": "조합설립인가",
-      "public_data_count": "1400건",
+      "public_data_count": "1401건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -92165,7 +91407,7 @@
       "name": "신반포4차아파트 재건축정비사업조합",
       "address": "잠원동 70",
       "stage": "조합설립인가",
-      "public_data_count": "2197건",
+      "public_data_count": "2199건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202408270008",
@@ -92979,7 +92221,7 @@
       "name": "신반포2차아파트 재건축정비사업조합",
       "address": "잠원동 73",
       "stage": "조합설립인가",
-      "public_data_count": "1961건",
+      "public_data_count": "1962건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -93105,7 +92347,7 @@
       "name": "개포주공6,7단지아파트 재건축정비사업조합",
       "address": "개포동 185",
       "stage": "사업시행인가",
-      "public_data_count": "4176건",
+      "public_data_count": "4180건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201810110042",
@@ -93925,7 +93167,7 @@
       "name": "논현동현아파트 재건축정비사업",
       "address": "논현동 105",
       "stage": "추진위원회승인",
-      "public_data_count": "95건",
+      "public_data_count": "96건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -94371,7 +93613,7 @@
       "name": "대치미도아파트 재건축정비사업",
       "address": "대치동 511",
       "stage": "추진위원회승인",
-      "public_data_count": "96건",
+      "public_data_count": "99건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -94763,7 +94005,7 @@
       "name": "개포우성4차아파트 주택재건축정비사업조합",
       "address": "도곡동 465",
       "stage": "조합설립인가",
-      "public_data_count": "801건",
+      "public_data_count": "808건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11680AGZ200202200001",
@@ -94957,7 +94199,7 @@
       "name": "도곡우성아파트 재건축정비사업 조합",
       "address": "도곡동 934-10",
       "stage": "조합설립인가",
-      "public_data_count": "517건",
+      "public_data_count": "518건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11680AGZ202306050001",
@@ -95253,7 +94495,7 @@
       "name": "홍실아파트 주택재건축정비사업조합",
       "address": "삼성동 79",
       "stage": "준공인가",
-      "public_data_count": "2528건",
+      "public_data_count": "2535건",
       "timeliness": "-",
       "completeness": "99.99%",
       "map_record_code": "11000AGZ201511300259",
@@ -95271,7 +94513,7 @@
       "name": "압구정아파트지구 특별계획구역③ 재건축정비사업 조합",
       "address": "압구정동 369-1",
       "stage": "조합설립인가",
-      "public_data_count": "1522건",
+      "public_data_count": "1524건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -95519,7 +94761,7 @@
       "name": "한솔아파트 재건축정비사업",
       "address": "일원동 731",
       "stage": "추진위원회승인",
-      "public_data_count": "38건",
+      "public_data_count": "44건",
       "timeliness": "75.0%",
       "completeness": "95.48%",
       "map_record_code": null,
@@ -95554,8 +94796,8 @@
       "business_type": "재건축",
       "name": "가람아파트 재건축정비사업",
       "address": "일원동 735",
-      "stage": "추진위원회승인",
-      "public_data_count": "135건",
+      "stage": "조합설립인가",
+      "public_data_count": "139건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -95787,8 +95029,8 @@
       "name": "청담현대1차아파트 소규모재건축정비사업",
       "address": "청담동 75-1",
       "stage": "조합설립인가",
-      "public_data_count": "126건",
-      "timeliness": "33.33%",
+      "public_data_count": "127건",
+      "timeliness": "50.0%",
       "completeness": "98.33%",
       "map_record_code": null,
       "cafe_id": "dam877",
@@ -96183,7 +95425,7 @@
       "name": "가락미륭아파트 재건축정비사업조합",
       "address": "가락동 138",
       "stage": "관리처분인가",
-      "public_data_count": "1624건",
+      "public_data_count": "1626건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ202003050003",
@@ -96343,7 +95585,7 @@
       "name": "삼환가락아파트 재건축정비사업 조합",
       "address": "가락동 176",
       "stage": "관리처분인가",
-      "public_data_count": "1228건",
+      "public_data_count": "1233건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201807120619",
@@ -96361,7 +95603,7 @@
       "name": "가락극동아파트 재건축사업 조합",
       "address": "가락동 192",
       "stage": "사업시행인가",
-      "public_data_count": "1536건",
+      "public_data_count": "1538건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201807120617",
@@ -98673,7 +97915,7 @@
       "name": "마천2재정비촉진구역 주택재개발정비사업",
       "address": "마천동 183-1",
       "stage": "추진위원회승인",
-      "public_data_count": "41건",
+      "public_data_count": "42건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -99619,7 +98861,7 @@
       "name": "가락1차현대아파트 재건축정비사업 조합",
       "address": "문정동 3",
       "stage": "사업시행인가",
-      "public_data_count": "2020건",
+      "public_data_count": "2024건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11710AGZ202105100001",
@@ -99825,7 +99067,7 @@
       "name": "대림가락아파트 재건축정비사업조합",
       "address": "방이동 217",
       "stage": "조합설립인가",
-      "public_data_count": "1135건",
+      "public_data_count": "1138건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11710AGZ202108270001",
@@ -99956,8 +99198,8 @@
       "business_type": "재건축",
       "name": "한양1차아파트 재건축정비사업",
       "address": "송파동 119",
-      "stage": "추진위원회승인",
-      "public_data_count": "170건",
+      "stage": "조합설립인가",
+      "public_data_count": "171건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -99993,7 +99235,7 @@
       "name": "송파미성아파트 재건축정비사업조합",
       "address": "송파동 161",
       "stage": "조합설립인가",
-      "public_data_count": "1020건",
+      "public_data_count": "1021건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -100011,7 +99253,7 @@
       "name": "가락삼익맨숀아파트 재건축정비사업 조합",
       "address": "송파동 166",
       "stage": "관리처분인가",
-      "public_data_count": "2487건",
+      "public_data_count": "2491건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11710AGZ202010230001",
@@ -100255,7 +99497,7 @@
       "name": "잠실미성·크로바아파트 주택재건축정비사업조합",
       "address": "신천동 17-6",
       "stage": "준공인가",
-      "public_data_count": "2142건",
+      "public_data_count": "2143건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -100735,7 +99977,7 @@
       "name": "잠실5단지아파트 주택재건축정비사업조합",
       "address": "잠실동 27",
       "stage": "사업시행인가",
-      "public_data_count": "5455건",
+      "public_data_count": "5457건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11710UTZ202204200002",
@@ -100753,7 +99995,7 @@
       "name": "잠실우성아파트 재건축정비사업조합",
       "address": "잠실동 101-1",
       "stage": "조합설립인가",
-      "public_data_count": "2036건",
+      "public_data_count": "2038건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": "11000AGZ201607250294",
@@ -100807,7 +100049,7 @@
       "name": "풍납미성아파트 재건축정비사업",
       "address": "풍납동 219",
       "stage": "추진위원회승인",
-      "public_data_count": "63건",
+      "public_data_count": "65건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -101817,7 +101059,7 @@
       "name": "명일동 신동아아파트 재건축정비사업",
       "address": "명일동 44",
       "stage": "추진위원회승인",
-      "public_data_count": "51건",
+      "public_data_count": "52건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -101853,7 +101095,7 @@
       "name": "고덕현대아파트 재건축정비사업",
       "address": "명일동 56",
       "stage": "추진위원회승인",
-      "public_data_count": "87건",
+      "public_data_count": "91건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -102851,7 +102093,7 @@
       "name": "상일동 빌라단지 통합 재건축",
       "address": "상일동 174",
       "stage": "추진위원회승인",
-      "public_data_count": "21건",
+      "public_data_count": "22건",
       "timeliness": "83.33%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -103551,7 +102793,7 @@
       "name": "천호8재정비촉진구역 도시정비형 재개발사업 조합",
       "address": "천호동 166-4",
       "stage": "조합설립인가",
-      "public_data_count": "436건",
+      "public_data_count": "437건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
@@ -103731,7 +102973,7 @@
       "name": "천호동 461-31번지 일대 재개발정비사업(천호 A1-2)",
       "address": "천호동 461-31",
       "stage": "조합설립인가",
-      "public_data_count": "197건",
+      "public_data_count": "199건",
       "timeliness": "100.0%",
       "completeness": "100.0%",
       "map_record_code": null,
